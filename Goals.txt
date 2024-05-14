@@ -1,0 +1,28 @@
+2024 Poop Extractor Goals
+
+- Reimplement version 1's data collection, in separate functions
+    - Allowing for return of users
+    - Custom Names for users
+    - A Save folder so no need to extract everytime
+- Use multiple functions to clean the data with good explanations of each
+    - Function to remove messages with no numbers in them, or are photos, voicemessages extract
+    - Function to create a dictionary of a users input number form a message and date
+    - Function to remove inappropriately huge numbers
+    - Function to chain together consecutive numbers, with their gaps
+    - Function to analyse possible connections of chains
+    - Function to connect chains with minimal missed numbers
+    - Function to merge all users chained poops to one framework
+- Extra functions
+    - Function to recombine poops with original messages and reactions
+    - Function to return all missed poops
+    - Function to count number of gifs sent (for Jack)
+    - Function to calculate longest and shortest time between poops
+    - Function to calculate most reacted to messages over a time period
+    - Fucntion to extract weather data over days for comparison
+- Data Representation
+    - Pygame display of poops over time, akin to version 1
+    - Plots of poops per month, pie charts etc
+    - Plot to compare funniness to poops
+    - Plot to compare poops per hour/per waking hour
+    - Plot to compare poops per time of the days
+    - Plot to compare the impact of weather/holidays on poops

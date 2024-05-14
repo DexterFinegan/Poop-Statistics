@@ -1,4 +1,7 @@
-# Instagram poop extractor
+# Instagram poop extractor 2023
+# Goal: Use data science to extract groupchat messages of 2023 poop chat and make an accurate table of everyones poops thoughout the year
+# Then make a visual representation of everyones poops over time using pygame
+# Version 1 - 2023
 
 import pandas as pd
 import os
@@ -271,9 +274,9 @@ def run_window(wn, data):
         participants.append(Participant(pos, data[name], name))
         pos += 1
 
-    bg = pygame.image.load("bg.png")
-    poop1 = pygame.image.load("poop1.png")
-    poop2 = pygame.image.load("poop2.png")
+    bg = pygame.image.load("pictures/bg.png")
+    poop1 = pygame.image.load("pictures/poop1.png")
+    poop2 = pygame.image.load("pictures/poop2.png")
 
     while True:
         pygame.display.update()
