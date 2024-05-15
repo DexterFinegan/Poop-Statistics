@@ -8,10 +8,10 @@ Tasks completed denoted by X's on the right
 - Use multiple functions to clean the data with good explanations of each
     - Function to remove messages with no numbers in them, or are photos, voicemessages extract         X
     - Function to create a dictionary of a users input number form a message and date                   X
-    - Function to chain together consecutive numbers, with their gaps
-    - Function to analyse possible connections of chains
-    - Function to connect chains with minimal missed numbers
-    - Function to merge all users chained poops to one framework
+    - Function to chain together consecutive numbers, with their gaps                                   X
+    - Function to analyse possible connections of chains                                                X
+    - Function to connect chains with minimal missed numbers                                            X
+    - Function to merge all users chained poops to one framework                                        X
 - Extra functions
     - Function to recombine poops with original messages and reactions
     - Function to return all missed poops

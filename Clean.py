@@ -1,5 +1,8 @@
 # Contains all functions for cleaning data
 
+# Modules to import
+import pandas as pd
+
 # Function to remove messages with no numbers in them
 def isolate_number_messages(User_messages):
     # INPUT #
@@ -93,9 +96,12 @@ def find_chain(User_messages, start_num = 1, start_index = 0):
             start = index
             break
     
-    # Fail Scenario : Number never posted in chat
+    # Fail Scenario 1 : Number never posted in chat
     if start == 0 and start_index != 0:
-        print(f"\nCould not find {start_num} in list of messages")
+        return chain, start_index
+    
+    # Fail Scenario 2 : Number posted in chat but unreasonably long after previous number, hence must be irrelevant
+    if start - start_index > 20:                                    # Assuming consecutive numbers should be within 20 messages of each other, unsure tho
         return chain, start_index
     
     # Examine consecutive messages from start point for consecutive numbers
@@ -125,5 +131,88 @@ def find_chain(User_messages, start_num = 1, start_index = 0):
     
     return chain, current_index
 
-        
+# Function to display all chains of a users poops, including missed poops
+def display_chains(User_messages):
+    # INPUT #
+    # User_messages :   List - list of lists conatining all numbers in each message in index 0 and the timestamp of the message in index 1
 
+    index = 0
+    start_num = 1
+    chain_num = 1
+    while index + 1 < len(User_messages):
+        chain, index = find_chain(User_messages, start_num = start_num, start_index = index)
+        if chain != []:
+            start_num = chain[-1][0] + 1
+
+            print(f"\nChain {chain_num}\n")
+            for entry in chain:
+                print(entry)
+            chain_num += 1
+        else:
+            print(f"\nCould not find {start_num} in list of messages")
+            start_num += 1
+
+# Function to create one long chain of all numbers of a particular user
+def long_chain(User_messages):
+    # INPUT #
+    # User_messages :   List - list of lists conatining all numbers in each message in index 0 and the timestamp of the message in index 1
+
+    # OUTPUT #
+    # User_numbers  :   List - list of lists containing each consecutive number (excluding missed numbers) in index 0 and the message timestamp in index 1
+
+    User_numbers = []
+
+    index = 0
+    start_num = 1
+    chain_num = 1
+
+    # Creating all chains
+    while index + 1 < len(User_messages):
+        chain, index = find_chain(User_messages, start_num = start_num, start_index = index)
+        if chain != []:
+            start_num = chain[-1][0] + 1
+
+            for entry in chain:
+                # Appending chain to big chain
+                User_numbers.append(entry)
+            chain_num += 1
+        else:
+            start_num += 1
+    
+    return User_numbers
+
+# Function to convert a list of messages into a pandas dataframe
+def return_to_dataframe(data):
+    # INPUT #
+    # data  :   List - list of lists of all messages with index 0 being the user name, index 1, being the number, index 2 being the timestamp of the message
+
+    # OUTPUT #
+    # DataFrame : pandas DataFrame - containing all messages appropriately stored
+
+    # First changing it to a list of dictionaries akin to original json file
+    messages = []
+    for entry in data:
+        dictionary = {}
+        dictionary["user"] = entry[0]
+        dictionary["poop"] = entry[1]
+        dictionary["timestamp"] = entry[2]
+        messages.append(dictionary)
+    
+    # Making it into a dataframe like in the extract section
+    DataFrame = pd.DataFrame(messages)
+
+    return DataFrame
+
+# Function to clean up appearance of DataFrame; change timestamp to data format, put in chronological order
+def clean_dataframe(DataFrame):
+    # INPUT #
+    # DataFrame :   pandas DataFrame - used for after all data has been cleaned
+
+    # OUTPUT #
+    # DataFrame :   pandas DataFrame - organised dataframe
+
+    DataFrame = DataFrame.sort_values(by="timestamp", ascending=True)
+    DataFrame["timestamp"] = pd.to_datetime(DataFrame["timestamp"], format="mixed").dt.date
+    DataFrame = DataFrame.reset_index(drop=True)
+
+    return DataFrame
