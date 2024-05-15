@@ -1,13 +1,13 @@
 2024 Poop Extractor Goals
+Tasks completed denoted by X's on the right
 
 - Reimplement version 1's data collection, in separate functions
-    - Allowing for return of users
-    - Custom Names for users
-    - A Save folder so no need to extract everytime
+    - Allowing for return of users                                                                      X
+    - Custom Names for users                                                                            X
+    - A Save folder so no need to extract everytime                                                     
 - Use multiple functions to clean the data with good explanations of each
-    - Function to remove messages with no numbers in them, or are photos, voicemessages extract
-    - Function to create a dictionary of a users input number form a message and date
-    - Function to remove inappropriately huge numbers
+    - Function to remove messages with no numbers in them, or are photos, voicemessages extract         X
+    - Function to create a dictionary of a users input number form a message and date                   X
     - Function to chain together consecutive numbers, with their gaps
     - Function to analyse possible connections of chains
     - Function to connect chains with minimal missed numbers
