@@ -17,4 +17,19 @@ Dex_messages = messages_sent_by(dataframe, user="Dex")
 
 # Cleaning Data
 Dex_messages = isolate_number_messages(Dex_messages)
-display_user_messages(Dex_messages)
+Dex_messages = change_mesasges_to_just_numbers(Dex_messages)
+
+index = 0
+start_num = 1
+chain_num = 1
+while index + 1 < len(Dex_messages):
+    chain, index = find_chain(Dex_messages, start_num = start_num, start_index = index)
+    if chain != []:
+        start_num = chain[-1][0] + 1
+
+        print(f"\nChain {chain_num}\n")
+        for entry in chain:
+            print(entry)
+        chain_num += 1
+    else:
+        start_num += 1
