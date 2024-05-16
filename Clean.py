@@ -2,6 +2,7 @@
 
 # Modules to import
 import pandas as pd
+from Extract import data_drop
 
 # Function to remove messages with no numbers in them
 def isolate_number_messages(User_messages):
@@ -216,3 +217,22 @@ def clean_dataframe(DataFrame):
     DataFrame = DataFrame.reset_index(drop=True)
 
     return DataFrame
+
+# Function to save dataframe to csv file
+def save_csv(df):
+    # INPUT #
+    # df    :   pandas DataFrame - as wished to be saved
+
+    df.to_csv("save_file.csv")
+
+# Function to load dataframe from csv file
+def load_csv(directory):
+    # INPUT #
+    # directory :   String - path to csv file
+
+    # OUTPUT #
+    # df    :   pandas DataFrame - as shown in csv file
+
+    df = pd.read_csv(directory)
+    df = data_drop(df, ["Unnamed: 0"])
+    return df

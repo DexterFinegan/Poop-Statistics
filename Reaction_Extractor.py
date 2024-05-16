@@ -87,8 +87,7 @@ def top_liked_messages(df):
                 dictionary["num_likes"] = len(df["reactions"][index])
                 dictionary["text"] = df["content"][index]
                 dictionary["photo"] = df["photos"][index]
-                dictionary["video"] = df["videos"][index]
-                dictionary["voice_message"] = df["audio_files"][index]
+                dictionary["date"] = df["timestamp_ms"][index]
                 top_liked_list.append(dictionary)
 
     liked_messages = pd.DataFrame(top_liked_list)
