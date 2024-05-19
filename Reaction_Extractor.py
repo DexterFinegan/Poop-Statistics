@@ -8,7 +8,7 @@ import pandas as pd
 df = extract_data(directory="DATA/messages/inbox/2023poopcounter")
 df = replace_names(df)
 df = df.reset_index(drop=True)
-users = users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
+users = get_users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
 
 # Function to calculate total likes for each user
 def total_likes(df, users):
@@ -93,5 +93,3 @@ def top_liked_messages(df):
     liked_messages = pd.DataFrame(top_liked_list)
     liked_messages = liked_messages.sort_values(by="num_likes", ascending=False)
     return liked_messages
-
-print(top_liked_messages(df))

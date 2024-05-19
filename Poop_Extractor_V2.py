@@ -6,9 +6,10 @@
 from Extract import *
 from Clean import *
 from Display import *
+from Reaction_Extractor import *
 
-new_extraction = False
-if new_extraction:
+# Function to Extract, Clean and Save a new dataframe of poops
+def new_clean_df():
     # Initialising project
     print("Creating Dataframe...")
     dataframe = extract_data(directory="DATA/messages/inbox/2023poopcounter")
@@ -25,7 +26,7 @@ if new_extraction:
 
 
     # Generalising to all users
-    users = users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
+    users = get_users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
     everyones_data = []
     for user in users["name"]:
 
@@ -49,6 +50,17 @@ if new_extraction:
     df = return_to_dataframe(everyones_data)
     df = clean_dataframe(df)
     save_csv(df)
-else:
-    df = load_csv("save_file.csv")
-    poops_per_person(df, users(directory="DATA/messages/inbox/2023poopcounter", refactor=True))
+
+    return df
+
+# Function to Extract an uncleaned df
+def new_unclean_df():
+    df = extract_data(directory="DATA/messages/inbox/2023poopcounter")
+    df = replace_names(df)
+    df = df.reset_index(drop=True)
+
+    return df
+
+df = new_unclean_df()
+names = get_users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
+pie_of_messages(total_sent_messages(df=df, users=names))

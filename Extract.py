@@ -64,7 +64,7 @@ def replace_names(MEGAFRAME):
     return MEGAFRAME
 
 # Function to return all members of the group
-def users(directory, refactor=False):
+def get_users(directory, refactor=False):
     # INPUT #
     # directory : String - detailing path to groupchat folder
     # refector  : Boolean - denoting whether names should be refactored
