@@ -13,15 +13,15 @@ Tasks completed denoted by X's on the right
     - Function to connect chains with minimal missed numbers                                            X
     - Function to merge all users chained poops to one framework                                        X
 - Extra functions
-    - Function to recombine poops with original messages and reactions
+    - Function to recombine poops with original messages and reactions                                  X
     - Function to return all missed poops
     - Function to count number of gifs sent (for Jack)
     - Function to calculate longest and shortest time between poops
-    - Function to calculate most reacted to messages over a time period
+    - Function to calculate most reacted to messages over a time period                                 X
     - Fucntion to extract weather data over days for comparison
 - Data Representation
     - Pygame display of poops over time, akin to version 1
-    - Plots of poops per month, pie charts etc
+    - Plots of poops per month, pie charts etc                                                          X
     - Plot to compare funniness to poops
     - Plot to compare poops per hour/per waking hour
     - Plot to compare poops per time of the days

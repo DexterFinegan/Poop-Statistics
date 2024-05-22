@@ -95,22 +95,25 @@ def get_users(directory, refactor=False):
     return MEGAFRAME
 
 # Function to return a dataframe of solely one users messages
-def messages_sent_by(MEGAFRAME, user):
+def messages_sent_by(MEGAFRAME, user, sender_col_name="sender_name", content_col_name="content", time_col_name="timestamp_ms"):
     # INPUT #
     # MEGAFRAME     :   pandas DataFrame - containing all messages, preferably with refactored names
     # user          :   String - users name as shown in dataframe of messages to isolate
+    # sender_col_name   :   String - In the case that the username in the dataframe is not "sender_name", this can be used to replace it
+    # content_col_name  :   String - In the case that the content of the message in the dataframe is not "content", this cane be used to replace it
+    # time_col_name :   String - In the case that the time in the dataframe is not "timestamp_ms", this can be used to replace it
 
     # OUTPUT #
-    # MEGAFRAME     :   pandas DataFrame - containing only the messages of the user selected
+    # User_messages :   pandas DataFrame - containing only the messages of the user selected
     
     # Creating Dictionary with keys being the timestamp and data being the message
     User_messages = {}                          
 
     # Iterating through all rows in MEGAFRAME
     for i,row in MEGAFRAME.iterrows():
-        if row["sender_name"] == user:
-            if not pd.isna(row["content"]):                                 # Not including NaN messages
-                User_messages[str(row["timestamp_ms"])] = row["content"]
+        if row[sender_col_name] == user:
+            if not pd.isna(row[content_col_name]):                                 # Not including NaN messages
+                User_messages[str(row[time_col_name])] = row[content_col_name]
     
     return User_messages
 
@@ -121,3 +124,66 @@ def display_user_messages(User_messages):
 
     for key in User_messages.keys():
         print(f"{key} : {User_messages[key]}\n")
+
+# Function to extract all gifs sent my a users (For Jack)
+def gifs_sent_by(MEGAFRAME, user, sender_col_name="sender_name"):
+    # INPUT #
+    # MEGAFRAME     :   pandas DataFrame - containing all messages, preferably with refactored names
+    # user          :   String - users name as shown in dataframe of messages to isolate
+    # sender_col_name   :   String - In the case that the username in the dataframe is not "sender_name", this can be used to replace it
+
+    # OUTPUT #
+    # User_gifs     :   pandas DataFrame - containing only the gifs of the user selected
+    
+    # Creating Dictionary with keys being the timestamp and data being the gif link
+    User_gifs = {}                          
+
+    # Iterating through all rows in MEGAFRAME
+    gif_num = 0
+    for i,row in MEGAFRAME.iterrows():
+        if row[sender_col_name] == user:
+            if not pd.isna(row["share"]):                                # Not including NaN shares
+                if not pd.isna(row["share"]["link"]):                    # Not including NaN links
+                    if "giphy" in row["share"]["link"]:                  # Checking the link is a giphy link
+                        User_gifs[str(row["timestamp_ms"])] = "g" + str(gif_num)
+                        gif_num += 1
+    
+    return User_gifs
+
+# Function to merge a users poops with the gifs they sent (if they were annoying enough to use gifs primarily)
+def merge_messages_and_gifs(clean_df, unclean_df, user):
+    # INPUT #
+    # clean_df      :   pandas DataFrame - containing all poop messages, preferably with refactored names
+    # unclean_df    :   pandas DataFrame - containing all messages sent by the user to the chat, with refactored names
+    # user          :   String - users name as shown in dataframe of messages to isolate
+
+    # OUTPUT #
+    # df            :   pandas DataFrame - containg all poops of individual
+
+    ## Not ready yet, isn't optimized ##
+    
+    # Collecting relevant messages into two dictionaries
+    messages = messages_sent_by(clean_df, user, sender_col_name="user", content_col_name="poop", time_col_name="timestamp")
+    gifs = gifs_sent_by(unclean_df, user)
+
+    # Sorting through both dictionaries to create a DataFrame
+    final = []
+    for key in messages.keys():
+        dictionary = {}
+        dictionary["timestamp"] = key
+        dictionary["poop"] = messages[key]
+        final.append(dictionary)
+
+    for key in gifs.keys():
+        dictionary = {}
+        dictionary["timestamp"] = key
+        dictionary["poop"] = gifs[key]
+        final.append(dictionary)
+
+    df = pd.DataFrame(final)
+
+    # Cleaning DataFrame
+    df["timestamp"] = pd.to_datetime(df["timestamp"], format="mixed").dt.date
+    df = df.sort_values(by="timestamp", ascending=True)
+
+    return df

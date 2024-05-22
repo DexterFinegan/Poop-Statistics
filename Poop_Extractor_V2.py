@@ -8,6 +8,8 @@ from Clean import *
 from Display import *
 from Reaction_Extractor import *
 
+dir = "DATA/messages/inbox/2023poopcounter"
+
 # Function to Extract, Clean and Save a new dataframe of poops
 def new_clean_df():
     # Initialising project
@@ -61,6 +63,7 @@ def new_unclean_df():
 
     return df
 
-df = new_unclean_df()
-names = get_users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
-pie_of_messages(total_sent_messages(df=df, users=names))
+df = load_csv("save_file.csv")
+print("Printing")
+test = merge_messages_and_gifs(df, new_unclean_df(), "Jack")
+print(test)

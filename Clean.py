@@ -204,7 +204,7 @@ def return_to_dataframe(data):
 
     return DataFrame
 
-# Function to clean up appearance of DataFrame; change timestamp to data format, put in chronological order
+# Function to clean up appearance of DataFrame; change timestamp to date format, put in chronological order
 def clean_dataframe(DataFrame):
     # INPUT #
     # DataFrame :   pandas DataFrame - used for after all data has been cleaned
