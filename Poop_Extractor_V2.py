@@ -65,5 +65,4 @@ def new_unclean_df():
 
 df = load_csv("save_file.csv")
 print("Printing")
-test = merge_messages_and_gifs(df, new_unclean_df(), "Jack")
-print(test)
+display_bar_chart(df)
