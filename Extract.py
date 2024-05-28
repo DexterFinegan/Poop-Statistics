@@ -45,7 +45,7 @@ def data_drop(MEGAFRAME, drop_list):
 
     return MEGAFRAME
 
-# Function to refactor names in dataframe
+# Function to refactor names in dataframe - must alter for each set of users
 def replace_names(MEGAFRAME):
     # INPUT #
     # MEGAFRAME : pandas dataframe
@@ -53,13 +53,15 @@ def replace_names(MEGAFRAME):
     # OUTPUT #
     # MEGAFRAME : pandas dataframe with refactored names, custom applied in function
 
-    MEGAFRAME["sender_name"].replace({'shauna\u00f0\u009f\u00a6\u0089': "Shauna",
+    MEGAFRAME["sender_name"].replace({"Finn Blaumann": "Finn",
                                     "\u00f0\u009d\u0093\u0094\u00f0\u009d\u0093\u00b8\u00f0\u009d\u0093\u00b2\u00f0\u009d\u0093\u00b7": "Eoin",
-                                        "Neo O'Herlihy": "Neo",
+                                        "Stephen Allen": "Stephen",
                                         "Conor Mcmenamin": "Conor",
-                                        "Noel Brassil": "Noel",
+                                        "Dan Griffin": "Dan",
                                         "Ros Hanley": "Ros",
-                                        "Jack McRann": "Jack" }, inplace=True)
+                                        "Jack McRann": "Jack",
+                                        "lalala lucky to have me here": "Soumia",
+                                        "Katie Long": "Katie" }, inplace=True)
 
     return MEGAFRAME
 
@@ -84,13 +86,15 @@ def get_users(directory, refactor=False):
     
     # Refactoring names to be more legible, custom in code and assumed works
     if refactor:
-        MEGAFRAME["name"].replace({'shauna\u00f0\u009f\u00a6\u0089': "Shauna",
-                                        "\u00f0\u009d\u0093\u0094\u00f0\u009d\u0093\u00b8\u00f0\u009d\u0093\u00b2\u00f0\u009d\u0093\u00b7": "Eoin",
-                                            "Neo O'Herlihy": "Neo",
-                                            "Conor Mcmenamin": "Conor",
-                                            "Noel Brassil": "Noel",
-                                            "Ros Hanley": "Ros",
-                                            "Jack McRann": "Jack" }, inplace=True)
+        MEGAFRAME["name"].replace({"Finn Blaumann": "Finn",
+                                    "\u00f0\u009d\u0093\u0094\u00f0\u009d\u0093\u00b8\u00f0\u009d\u0093\u00b2\u00f0\u009d\u0093\u00b7": "Eoin",
+                                        "Stephen Allen": "Stephen",
+                                        "Conor Mcmenamin": "Conor",
+                                        "Dan Griffin": "Dan",
+                                        "Ros Hanley": "Ros",
+                                        "Jack McRann": "Jack",
+                                        "lalala lucky to have me here": "Soumia",
+                                        "Katie Long": "Katie" }, inplace=True)
 
     return MEGAFRAME
 

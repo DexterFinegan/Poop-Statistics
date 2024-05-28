@@ -166,6 +166,7 @@ def long_chain(User_messages):
     index = 0
     start_num = 1
     chain_num = 1
+    give = 0            # Give variable breaks major flaws
 
     # Creating all chains
     while index + 1 < len(User_messages):
@@ -177,8 +178,12 @@ def long_chain(User_messages):
                 # Appending chain to big chain
                 User_numbers.append(entry)
             chain_num += 1
+            give = 0
         else:
             start_num += 1
+            give += 1
+            if give > 7:
+                return User_numbers
     
     return User_numbers
 

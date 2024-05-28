@@ -42,12 +42,11 @@ def poops_per_person(df, users):
     for user in users["name"]:
         poop_days = []
         poop = []
-        if user != "Noel":
-            for index in range(len(df)):
-                if df["user"][index] == user:
-                    poop_days.append(df["timestamp"][index])
-                    poop.append(df["poop"][index])
-            plt.plot(poop_days, poop, label=user)
+        for index in range(len(df)):
+            if df["user"][index] == user:
+                poop_days.append(df["timestamp"][index])
+                poop.append(df["poop"][index])
+        plt.plot(poop_days, poop, label=user)
     
     # Plotting and displaying graph + legend
     plt.legend()

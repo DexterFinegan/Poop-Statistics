@@ -8,46 +8,34 @@ from Clean import *
 from Display import *
 from Reaction_Extractor import *
 
-dir = "DATA/messages/inbox/2023poopcounter"
+location = "DATA/messages/inbox/weaponsofassdestruction"
 
 # Function to Extract, Clean and Save a new dataframe of poops
-def new_clean_df():
+def new_clean_df(dir):
     # Initialising project
     print("Creating Dataframe...")
-    dataframe = extract_data(directory="DATA/messages/inbox/2023poopcounter")
-    dataframe = data_drop(dataframe, drop_list=["share", "reactions", "photos", "audio_files", "videos", "call_duration"])
+    dataframe = extract_data(directory=dir)
+    dataframe = data_drop(dataframe, drop_list=["share", "is_geoblocked_for_viewer", "reactions", "photos", "audio_files", "videos", "call_duration"])
     dataframe = replace_names(dataframe)
 
-    # Isolating one user
-    Dex_messages = messages_sent_by(dataframe, user="Dex")
-
-    # Cleaning Data
-    Dex_messages = isolate_number_messages(Dex_messages)
-    Dex_messages = change_mesasges_to_just_numbers(Dex_messages)
-    Dex_messages = long_chain(Dex_messages)
-
-
     # Generalising to all users
-    users = get_users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
+    users = get_users(directory=dir, refactor=True)
     everyones_data = []
     for user in users["name"]:
 
-        # Exclude Noel cuz he fucked his up sm
-        if user != "Noel":
+        print(f"Begining on {user}'s Data\n")
+        # Cleaning Data
+        user_messages = messages_sent_by(dataframe, user=user)
+        user_messages = isolate_number_messages(user_messages)
+        user_messages = change_mesasges_to_just_numbers(user_messages)
+        user_numbers = long_chain(user_messages)
 
-            print(f"Begining on {user}'s Data\n")
-            # Cleaning Data
-            user_messages = messages_sent_by(dataframe, user=user)
-            user_messages = isolate_number_messages(user_messages)
-            user_messages = change_mesasges_to_just_numbers(user_messages)
-            user_numbers = long_chain(user_messages)
-
-            print(f"{user}'s data has been cleaned\n")
-            # Adding users name into their number chain
-            for entry in user_numbers:
-                everyones_data.append([user, entry[0], entry[1]])
-            
-            print(f"{user}'s data has been added\n")
+        print(f"{user}'s data has been cleaned\n")
+        # Adding users name into their number chain
+        for entry in user_numbers:
+            everyones_data.append([user, entry[0], entry[1]])
+        
+        print(f"{user}'s data has been added\n")
 
     df = return_to_dataframe(everyones_data)
     df = clean_dataframe(df)
@@ -56,13 +44,12 @@ def new_clean_df():
     return df
 
 # Function to Extract an uncleaned df
-def new_unclean_df():
-    df = extract_data(directory="DATA/messages/inbox/2023poopcounter")
+def new_unclean_df(dir):
+    df = extract_data(directory=dir)
     df = replace_names(df)
     df = df.reset_index(drop=True)
 
     return df
 
 df = load_csv("save_file.csv")
-print("Printing")
-display_bar_chart(df)
+poops_per_person(df=df, users=get_users(directory=location, refactor=True))
