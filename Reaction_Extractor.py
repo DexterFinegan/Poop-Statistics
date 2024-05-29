@@ -4,12 +4,6 @@
 from Extract import *
 import pandas as pd
 
-# Creating the DataFrame and list of users
-df = extract_data(directory="DATA/messages/inbox/2023poopcounter")
-df = replace_names(df)
-df = df.reset_index(drop=True)
-users = get_users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
-
 # Function to calculate total likes for each user
 def total_likes(df, users):
     # INPUT #
@@ -63,7 +57,10 @@ def like_to_messsage_ratio(df, users):
     num_messages_dict = total_sent_messages(df, users)
 
     for user in users["name"]:
-        ratio_dict[user] = num_likes_dict[user]/num_messages_dict[user]
+        if num_messages_dict[user] != 0:
+            ratio_dict[user] = num_likes_dict[user]/num_messages_dict[user]
+        else:
+            ratio_dict[user] = "Inconclusive"
 
     return ratio_dict
 

@@ -15,8 +15,14 @@ def new_clean_df(dir):
     # Initialising project
     print("Creating Dataframe...")
     dataframe = extract_data(directory=dir)
-    dataframe = data_drop(dataframe, drop_list=["share", "is_geoblocked_for_viewer", "reactions", "photos", "audio_files", "videos", "call_duration"])
     dataframe = replace_names(dataframe)
+    dataframe = dataframe.reset_index(drop=True)
+    dataframe = data_drop(dataframe, drop_list=["share", "is_geoblocked_for_viewer", "reactions", "photos", "audio_files", "videos", "call_duration"])
+
+    # Creating spare unclean dataframe for later
+    spare_df = extract_data(directory=dir)
+    spare_df = replace_names(spare_df)
+    spare_df = spare_df.reset_index(drop=True)
 
     # Generalising to all users
     users = get_users(directory=dir, refactor=True)
@@ -31,6 +37,7 @@ def new_clean_df(dir):
         user_numbers = long_chain(user_messages)
 
         print(f"{user}'s data has been cleaned\n")
+
         # Adding users name into their number chain
         for entry in user_numbers:
             everyones_data.append([user, entry[0], entry[1]])
@@ -51,5 +58,9 @@ def new_unclean_df(dir):
 
     return df
 
-df = load_csv("save_file.csv")
-poops_per_person(df=df, users=get_users(directory=location, refactor=True))
+df = new_unclean_df(location)
+players = get_users(location, refactor=True)
+print(f"Total Sent Messages : {total_sent_messages(df, players)}\n")
+print(f"Total Likes : {total_likes(df, players)}\n")
+print(f"L/M Ratio : {like_to_messsage_ratio(df, players)}\n")
+print(f"Top Liked Messages : {top_liked_messages(df)}")

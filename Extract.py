@@ -143,7 +143,7 @@ def gifs_sent_by(MEGAFRAME, user, sender_col_name="sender_name"):
     User_gifs = {}                          
 
     # Iterating through all rows in MEGAFRAME
-    gif_num = 0
+    gif_num = 1
     for i,row in MEGAFRAME.iterrows():
         if row[sender_col_name] == user:
             if not pd.isna(row["share"]):                                # Not including NaN shares

@@ -22,14 +22,16 @@ def isolate_number_messages(User_messages):
         contains_number = False
         message = User_messages[key]
 
-        # Iterating through all characters in the message to check if it has a number in it
-        for letter in message:
-            if letter in numbers:
-                contains_number = True
-        
-        # Adding messages with numbers in them to new dictionary
-        if contains_number:
-            Number_messages[key] = message
+        # Fixing for dan_griffin6 error
+        if "dan_griffin6" not in message:
+            # Iterating through all characters in the message to check if it has a number in it
+            for letter in message:
+                if letter in numbers:
+                    contains_number = True
+            
+            # Adding messages with numbers in them to new dictionary
+            if contains_number:
+                Number_messages[key] = message
 
     return Number_messages
 

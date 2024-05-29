@@ -46,6 +46,7 @@ def poops_per_person(df, users):
             if df["user"][index] == user:
                 poop_days.append(df["timestamp"][index])
                 poop.append(df["poop"][index])
+        print(f"{user} : {poop}\n")
         plt.plot(poop_days, poop, label=user)
     
     # Plotting and displaying graph + legend
