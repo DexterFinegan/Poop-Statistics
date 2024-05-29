@@ -19,11 +19,6 @@ def new_clean_df(dir):
     dataframe = dataframe.reset_index(drop=True)
     dataframe = data_drop(dataframe, drop_list=["share", "is_geoblocked_for_viewer", "reactions", "photos", "audio_files", "videos", "call_duration"])
 
-    # Creating spare unclean dataframe for later
-    spare_df = extract_data(directory=dir)
-    spare_df = replace_names(spare_df)
-    spare_df = spare_df.reset_index(drop=True)
-
     # Generalising to all users
     users = get_users(directory=dir, refactor=True)
     everyones_data = []
@@ -58,9 +53,7 @@ def new_unclean_df(dir):
 
     return df
 
-df = new_unclean_df(location)
+# Testing for Dan
+df = load_csv("save_file.csv")
 players = get_users(location, refactor=True)
-print(f"Total Sent Messages : {total_sent_messages(df, players)}\n")
-print(f"Total Likes : {total_likes(df, players)}\n")
-print(f"L/M Ratio : {like_to_messsage_ratio(df, players)}\n")
-print(f"Top Liked Messages : {top_liked_messages(df)}")
+poops_per_person(df=df, users = players)

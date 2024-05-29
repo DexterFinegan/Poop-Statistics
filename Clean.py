@@ -184,7 +184,8 @@ def long_chain(User_messages):
         else:
             start_num += 1
             give += 1
-            if give > 7:
+            if give > 15:
+                print("gave in")
                 return User_numbers
     
     return User_numbers
