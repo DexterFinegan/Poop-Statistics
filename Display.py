@@ -36,7 +36,7 @@ def poops_per_person(df, users):
     plt.rc("ytick", labelsize=15)
 
     # Changing the timestamp to datetime format
-    df["timestamp"] = pd.to_datetime(df["timestamp"], format="mixed").dt.date
+    df["timestamp"] = pd.to_datetime(df["timestamp"], format="mixed")
 
     # Iterating through users to plot their graph
     for user in users["name"]:

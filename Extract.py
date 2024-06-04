@@ -137,7 +137,7 @@ def gifs_sent_by(MEGAFRAME, user, sender_col_name="sender_name"):
     # sender_col_name   :   String - In the case that the username in the dataframe is not "sender_name", this can be used to replace it
 
     # OUTPUT #
-    # User_gifs     :   pandas DataFrame - containing only the gifs of the user selected
+    # User_gifs     :   Dict - containing only the gifs of the user selected, keys being the timstamp, data being the gif number preceeded by a "g"
     
     # Creating Dictionary with keys being the timestamp and data being the gif link
     User_gifs = {}                          
@@ -155,39 +155,61 @@ def gifs_sent_by(MEGAFRAME, user, sender_col_name="sender_name"):
     return User_gifs
 
 # Function to merge a users poops with the gifs they sent (if they were annoying enough to use gifs primarily)
-def merge_messages_and_gifs(clean_df, unclean_df, user):
+def merge_messages_and_gifs(clean_df, gifs, user):
     # INPUT #
     # clean_df      :   pandas DataFrame - containing all poop messages, preferably with refactored names
-    # unclean_df    :   pandas DataFrame - containing all messages sent by the user to the chat, with refactored names
+    # gifs          :   Dict - keys are timestamps, data is "g" concatenated with the number of the gif sent
     # user          :   String - users name as shown in dataframe of messages to isolate
 
     # OUTPUT #
-    # df            :   pandas DataFrame - containg all poops of individual
+    # new_df        :   pandas DataFrame - containg a cleaned list of all poops of all users with merged in gifs
 
     ## Not ready yet, isn't optimized ##
     
     # Collecting relevant messages into two dictionaries
     messages = messages_sent_by(clean_df, user, sender_col_name="user", content_col_name="poop", time_col_name="timestamp")
-    gifs = gifs_sent_by(unclean_df, user)
 
     # Sorting through both dictionaries to create a DataFrame
     final = []
     for key in messages.keys():
-        dictionary = {}
-        dictionary["timestamp"] = key
-        dictionary["poop"] = messages[key]
-        final.append(dictionary)
+        if messages[key] != 4:              # Temp precaution to fix Jacks iffy data
+            dictionary = {}
+            dictionary["timestamp"] = key
+            dictionary["poop"] = messages[key]
+            dictionary["user"] = "Jack"
+            final.append(dictionary)
 
     for key in gifs.keys():
         dictionary = {}
         dictionary["timestamp"] = key
-        dictionary["poop"] = gifs[key]
+        dictionary["poop"] = gifs[key][1:]
+        dictionary["user"] = "Jack"
         final.append(dictionary)
 
     df = pd.DataFrame(final)
 
-    # Cleaning DataFrame
-    df["timestamp"] = pd.to_datetime(df["timestamp"], format="mixed").dt.date
+    # Cleaning user DataFrame
+    df["timestamp"] = pd.to_datetime(df["timestamp"], format="mixed")
     df = df.sort_values(by="timestamp", ascending=True)
+    df = df.reset_index(drop=True)
 
-    return df
+    # Reconfiguring data frame to order the poop number of merged poop lists
+    for index in range(len(df)):
+        df["poop"][index] = index + 1
+
+    #### Merging the two dataframes ####
+    # Dropping user from clean dataframe 
+    for index in range(len(clean_df)):
+        if clean_df["user"][index] == user:
+            clean_df.drop([index])
+    
+    # Re-adding merged users df to clean df
+    new_df = pd.concat([clean_df, df])
+    new_df = new_df.sort_values(by="timestamp", ascending=True)
+    new_df = new_df.reset_index(drop=True)
+
+    # Saving to file
+    new_df.to_csv("save_file.csv")
+
+
+    return new_df

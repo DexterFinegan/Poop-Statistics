@@ -23,15 +23,11 @@ def new_clean_df(dir):
     users = get_users(directory=dir, refactor=True)
     everyones_data = []
     for user in users["name"]:
-
-        print(f"Begining on {user}'s Data\n")
         # Cleaning Data
         user_messages = messages_sent_by(dataframe, user=user)
         user_messages = isolate_number_messages(user_messages)
         user_messages = change_mesasges_to_just_numbers(user_messages)
         user_numbers = long_chain(user_messages)
-
-        print(f"{user}'s data has been cleaned\n")
 
         # Adding users name into their number chain
         for entry in user_numbers:
@@ -53,7 +49,9 @@ def new_unclean_df(dir):
 
     return df
 
-# Testing for Dan
-df = load_csv("save_file.csv")
+# Testing for Jack
+df = new_unclean_df(location)
 players = get_users(location, refactor=True)
-poops_per_person(df=df, users = players)
+print(f"Total Likes : {total_likes(df, players)}\n")
+print(f"Total Messages : {total_sent_messages(df, players)}\n")
+print(f"L/M Ratio : {like_to_messsage_ratio(df, players)}\n")

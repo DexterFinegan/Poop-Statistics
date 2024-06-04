@@ -221,7 +221,7 @@ def clean_dataframe(DataFrame):
     # DataFrame :   pandas DataFrame - organised dataframe
 
     DataFrame = DataFrame.sort_values(by="timestamp", ascending=True)
-    DataFrame["timestamp"] = pd.to_datetime(DataFrame["timestamp"], format="mixed").dt.date
+    DataFrame["timestamp"] = pd.to_datetime(DataFrame["timestamp"], format="mixed")
     DataFrame = DataFrame.reset_index(drop=True)
 
     return DataFrame
