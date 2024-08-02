@@ -24,6 +24,15 @@ def total_likes(df, users):
 
     return num_likes_dict
 
+# Function to calculate the total likes given out
+def total_sent_likes(df, users):
+    num_likes_dict = {}
+    for user in users["name"]:
+        num_likes = 0
+        for index in range(len(df)):
+            if "reactions" in df[index].keys():
+                print("yes")
+
 # Function to calculate the total number of messages sent by each user
 def total_sent_messages(df, users):
     # INPUT #

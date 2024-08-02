@@ -49,9 +49,29 @@ def new_unclean_df(dir):
 
     return df
 
-# Testing for Jack
+def get_ratios(location):
+    df = new_unclean_df(location)
+    players = get_users(location, refactor=True)
+    print(f"Total Likes : {total_likes(df, players)}\n")
+    print(f"Total Messages : {total_sent_messages(df, players)}\n")
+    print(f"L/M Ratio : {like_to_messsage_ratio(df, players)}\n")
+
+def display_bar_chart_visual(location):
+    df = load_csv("save_file.csv")
+    players = get_users(location, refactor=True)
+    display_bar_chart(df, players)
+
+# Reloading the data until August 1st
+def recreating_updated_df(location):
+    df = new_clean_df(location)
+
+    # Fixing for jacks shenaningans
+    dirty_df = new_unclean_df(location)
+    gifs = gifs_sent_by(dirty_df, "Jack")
+    df = merge_messages_and_gifs(df, gifs, "Jack")
+
+#display_bar_chart_visual(location)
+
 df = new_unclean_df(location)
 players = get_users(location, refactor=True)
-print(f"Total Likes : {total_likes(df, players)}\n")
-print(f"Total Messages : {total_sent_messages(df, players)}\n")
-print(f"L/M Ratio : {like_to_messsage_ratio(df, players)}\n")
+total_sent_likes(df, players)

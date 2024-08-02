@@ -6,6 +6,7 @@ import pygame
 import matplotlib.pyplot as plt
 import datetime
 from Extract import get_users
+import random
 
 # Function to create a plot of poops over time
 def poops_over_time(df):
@@ -104,7 +105,7 @@ def pie_of_messages(df):
 
 # Function to display a moving bar chart over time, akin to that of last years using pygame
 ### This Function is set up poorly, unoptimized and honestly should just restart another time ###
-def display_bar_chart(df, size=[800, 500]):
+def display_bar_chart(df, users, size=[800, 500]):
     # INPUT #
     # df        :   pandas DataFrame - of all poops, cleaned and refined for every user
     # size      :   List - of form [sc_w, sc_h]
@@ -116,68 +117,119 @@ def display_bar_chart(df, size=[800, 500]):
     pygame.init()
     sc_w, sc_h = size[0], size[1]
     wn = pygame.display.set_mode((sc_w, sc_h))
-    pygame.display.set_caption("Poop Statisitics")
+    pygame.display.set_caption("Poop Statistics")
     clock = pygame.time.Clock()
+    tick = 0
 
     # Local Variables pre run
     running = True
-    start = datetime.datetime(2023, 1, 1)
-    end = df["timestamp"].iloc[-1]
-    delta = datetime.timedelta(days=1)
-
-    # Setting up Log dictionary, to locate each users count at a given date
-    logs = {}
-    users = get_users(directory="DATA/messages/inbox/2023poopcounter", refactor=True)
+    stop = False
+    date_font = pygame.font.SysFont("Ariel", 35)
+    bg = pygame.image.load("bg.png")
+    user_dict = {}
+    bars = []
+    place = 0
     for user in users["name"]:
-        logs[user] = 0
-    
-    # Setting fonts
-    date_font = pygame.font.SysFont("Ariel", 50)
-    title_font = pygame.font.SysFont("Ariel", 75)
-    title = title_font.render("Poop Marathon 2023", 1, (0, 0, 0))
-    user_font = pygame.font.SysFont("Ariel", 40)
+        if user != "Finn":
+            user_dict[user] = 0
+            bars.append(Bar(user, place))
+            place += 1
 
+    # Game Loop
     while running:
-        # Updating Window
-        pygame.display.update()
-        wn.fill((255, 255, 255))
-        clock.tick(24)
-
-        # Updating date n title
-        month = date_font.render(start.strftime("%B"), 1, (0, 0, 0))
-        day = date_font.render(start.strftime("%d"), 1, (0, 0, 0))
-        wn.blit(month, (sc_w - 10 - month.get_width(), sc_h - 10 - month.get_height()))
-        wn.blit(day, (sc_w - 25 - month.get_width() - day.get_width(), sc_h - 10 - month.get_height()))
-        wn.blit(title, (sc_w/2 - title.get_width()/2, 15))
-
-        # Updating User titles
-        for i in range(len(logs.keys())):
-            name = list(logs.keys())[i]
-            text = user_font.render(name, 1, (0, 0, 0))
-            wn.blit(text, (15, 35 + title.get_height() + i*(text.get_height() + 10)))
-            number = user_font.render(str(logs[name]), 1, (0, 0, 0))
-            wn.blit(number, (sc_w - number.get_width() - 20, 35 + title.get_height() + i*(text.get_height() + 10)))
-
-
-        # Checking User Inputs
+        # Event Polling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
                 pygame.quit()
+        
+        # Temp display of tick
+        user_dict[df["user"][tick]] = df["poop"][tick]
 
-        # Iterating over days
-        for i,row in df.iterrows():
-            # Converting df timestamp from string to datetime class
-            date = row["timestamp"].split("-")
-            date = datetime.datetime(int(date[0]), int(date[1]), int(date[2]))
+        # Ticking
+        if not stop:
+            tick += 1
 
-            # Checking if any dates match and affecting change in the dictionary
-            if date == start:
-                logs[row["user"]] += 1
-        #print(logs, end="\n")
+        # Updating Window
+        wn.blit(bg, (0, 0))
+        clock.tick(60)
 
-        # Incrementing date
-        start += delta
+        # Updating all bars positions
+        for bar in bars:
+            bar.calculate_position(user_dict)
+        
+        # Checking for bars in the same place
+        positions = []
+        for bar in bars:
+            while bar.place in positions:
+                bar.place += 1
+            positions.append(bar.place)
+        
+        # Drawing Bars
+        for bar in bars:
+            bar.update(wn, user_dict)
 
+        # Date
+        date = pd.to_datetime(df["timestamp"][tick], format="mixed")
+        format = "%B %d"
+        string = date.strftime(format)
+        string_text = date_font.render(string, 1, (255, 255, 255))
+        wn.blit(string_text, (sc_w - 10 - string_text.get_width(), sc_h - 10 - string_text.get_height()))
+
+        # Correcting for KeyError
+        if tick + 2 == len(df):
+            stop = True
+
+        pygame.display.update()
+
+# Class to help with bar chart organising
+class Bar(object):
+    def __init__(self, user, place):
+        self.user = user
+        self.place = place
+        self.name_font = pygame.font.SysFont("Ariel", 30)
+        self.goal_y = 450 - self.place*40
+        self.y = self.goal_y
+        self.width = 0
+        self.col = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+    def update(self, wn, dict):
+        self.calculate_y()
+        poop = str(dict[self.user])
+        name = self.name_font.render(self.user, 1, (255, 255, 255))
+        poop_num = self.name_font.render(str(poop), 1, (255, 255, 255))
+        pygame.draw.rect(wn, self.col, (105, self.y - 10, self.width, 20))
+        wn.blit(name, (100 - name.get_width(), self.y - name.get_height()/2))
+        wn.blit(poop_num, (110 + self.width, self.y - poop_num.get_height()/2))
+
+    def calculate_position(self, dict):
+        # Calculating Place in Leaderboards
+        current_poop = dict[self.user]
+        poops = []
+        for key in dict.keys():
+            poops.append(dict[key])
+        poops = sorted(poops)
+        self.place = poops.index(current_poop)
+        self.goal_y = 435 - self.place*40
+
+        # Calculating width of bar
+        highest_poop = poops[-1]
+        if highest_poop != 0:
+            width_rate = current_poop/highest_poop
+        else:
+            width_rate = 0
+        self.width = 600*width_rate
+        
+
+
+    def calculate_y(self):
+        dy = self.goal_y - self.y
+        if dy != 0:
+            rate = 0.13
+            move = rate*dy
+
+            if dy**2 <= 2:
+                self.y = self.goal_y
+            else:
+                self.y += move
 
         
