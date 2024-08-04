@@ -1,10 +1,11 @@
 2024 Poop Extractor Goals
 Tasks completed denoted by X's on the right
 
+Version 1 & 2 Goals
 - Reimplement version 1's data collection, in separate functions
     - Allowing for return of users                                                                      X
     - Custom Names for users                                                                            X
-    - A Save folder so no need to extract everytime                                                     
+    - A Save folder so no need to extract everytime                                                     X                                              
 - Use multiple functions to clean the data with good explanations of each
     - Function to remove messages with no numbers in them, or are photos, voicemessages extract         X
     - Function to create a dictionary of a users input number form a message and date                   X
@@ -14,15 +15,39 @@ Tasks completed denoted by X's on the right
     - Function to merge all users chained poops to one framework                                        X
 - Extra functions
     - Function to recombine poops with original messages and reactions                                  X
-    - Function to return all missed poops
-    - Function to count number of gifs sent (for Jack)
-    - Function to calculate longest and shortest time between poops
+    - Function to count number of gifs sent (for Jack)                                                  X       
     - Function to calculate most reacted to messages over a time period                                 X
-    - Fucntion to extract weather data over days for comparison
 - Data Representation
-    - Pygame display of poops over time, akin to version 1
+    - Pygame display of poops over time, akin to version 1                                              X
     - Plots of poops per month, pie charts etc                                                          X
-    - Plot to compare funniness to poops
+    - Plot to compare funniness to poops                                                                X
+
+
+Version 2.1 Goals
+    - Have Save Files for each user's poops + a total poops dataframe
+    - Create Heatmap per user of time updated, and for the group each day of the week
+    - Biggest Like Giver
+    - Most Versatile Reactor
+    - Biggest Content Sharer
+    - Extrapolated data for lifetime poops 
     - Plot to compare poops per hour/per waking hour
-    - Plot to compare poops per time of the days
+    - Calculation to see how much money each person could earn if they pooped on work time 
     - Plot to compare the impact of weather/holidays on poops
+    - Fucntion to extract weather data over days for comparison
+    - Function to calculate longest and shortest time between poops per person and as a group 
+    - Function to return all missed poops  
+    - Refactor code to allow searching between certain datetimes, and so it all melds well with itself
+    - Use Hypothesis testing to find whether Conor and Eoin are within normal bounds
+    - Graph of consistency (dynamic?)  
+    - Most supportive/supported person likes on messages containing updates exclusively
+    - Rework algorithm for creating dataframe per user to optimize accuracy (especially gif related users)
+    - Full shit length
+    - Who get's aired the most
+    - Biggest duo conversationalists 
+    - Next poop prediction algorithm 
+    - Most used emojis
+    - dynamic bar chart for other data (not just poops)
+    - Calculate peoples word count 
+    - If the body has to shit out the same amount of poop, how big is each persons poop 
+    - supervised and unsupervised ML models on the data 
+    - Did anyone like their own messages?
