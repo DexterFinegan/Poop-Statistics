@@ -6,6 +6,8 @@
 import pandas as pd
 import os
 import json
+from Clean import *
+from datetime import datetime
 
 DIRECTORY = "DATA/messages/inbox/weaponsofassdestruction"
 
@@ -26,8 +28,10 @@ def extract_raw_data(directory):
                 df = pd.DataFrame(JSON_DATA["messages"])
                 MEGAFRAME = pd.concat([MEGAFRAME, df])
 
-    # Changing timestamp in dataframe to date and time
+    # Changing timestamp in dataframe to date and time, rounded to the nearest seocnd
     MEGAFRAME['timestamp_ms'] = pd.to_datetime(MEGAFRAME['timestamp_ms'], unit='ms')
+    MEGAFRAME.rename(columns={"timestamp_ms" : "timestamp"}, inplace=True)
+    MEGAFRAME["timestamp"] = MEGAFRAME["timestamp"].dt.round("1s")
 
     # Reversing order so indexes start at the beginning of the group chat
     MEGAFRAME = MEGAFRAME[::-1]
@@ -146,7 +150,7 @@ def clean_users_poop_data(user):
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
     messages = {"content" : [], "timestamp" : [], "reactions" : []}
 
-    # Iterating over every messages from this user
+    # Iterating over every message from this user
     for i in range(len(MEGAFRAME)):
         message = MEGAFRAME["content"][i]
         new_message = ""
@@ -170,4 +174,24 @@ def clean_users_poop_data(user):
 
     print(f"\n{user}'s Poops have been Successfully Cleaned and Saved\n")
 
-clean_users_poop_data("Dex")
+# Function to correct loaded dataframe to have string timestamps to datetime.datetime objects
+def correct_datetime_objects(df):
+    # INPUT #
+    # df    :   pandas Dataframe with a "timestamp" column
+
+    # OUTPUT #
+    # df  :   pandas DataFrame with "timestamp" colum filled with corresponding datetime objects
+
+    df['timestamp'] = pd.to_datetime(df['timestamp'], format='%Y-%m-%d %H:%M:%S')
+    df["timestamp"] = df["timestamp"].dt.round("1s")
+
+    return df
+
+
+# Call Space to work out kinks and represent data
+df = load_csv("Save Files/All_Raw_Data.csv")
+
+df = correct_datetime_objects(df)
+
+stamp = df["timestamp"][1]
+print(f"\nConverted Timestamp type : {type(stamp)}")

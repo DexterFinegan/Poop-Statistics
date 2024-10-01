@@ -3,6 +3,7 @@
 # Modules to import
 from Extract import *
 import pandas as pd
+from datetime import datetime, timedelta
 
 # Function to calculate total likes for each user
 def total_likes(df, users):
@@ -24,14 +25,39 @@ def total_likes(df, users):
 
     return num_likes_dict
 
-# Function to calculate the total likes given out
+# Function to calculate the total likes given out 
 def total_sent_likes(df, users):
+    # Setting up Dictionary
     num_likes_dict = {}
-    for user in users["name"]:
-        num_likes = 0
-        for index in range(len(df)):
-            if "reactions" in df[index].keys():
-                print("yes")
+    for index in range(len(users)):
+        num_likes_dict[users["name"][index]] = 0
+
+    # Counting Likes given by each person
+    for index in range(len(df)):
+        if isinstance(df["reactions"][index], list):
+            for reaction in df["reactions"][index]:
+                name = reaction["actor"]
+                if name == "\u00f0\u009d\u0093\u0094\u00f0\u009d\u0093\u00b8\u00f0\u009d\u0093\u00b2\u00f0\u009d\u0093\u00b7":
+                    name = "Eoin"
+                elif name == "lalala lucky to have me here":
+                    name = "Soumia"
+                elif name == "Conor Mcmenamin":
+                    name = "Conor"
+                elif name == "Stephen Allen":
+                    name = "Stephen"
+                elif name == "Dan Griffin":
+                    name = "Dan"
+                elif name == "Ros Hanley":
+                    name = "Ros"
+                elif name == "Katie Long":
+                    name = "Katie"
+                elif name == "Jack McRann":
+                    name = "Jack"
+                
+                num_likes_dict[name] += 1
+    return num_likes_dict
+
+                
 
 # Function to calculate the total number of messages sent by each user
 def total_sent_messages(df, users):
@@ -99,3 +125,38 @@ def top_liked_messages(df):
     liked_messages = pd.DataFrame(top_liked_list)
     liked_messages = liked_messages.sort_values(by="num_likes", ascending=False)
     return liked_messages
+
+# Function to calculate the average time it takes for the next person to respond to your messages   UNFINISHED
+def average_airtime(df, users, messages):
+    # INPUT #
+    # df    :   pandas DataFrame, cleaned
+    # users :   pandas DataFrame - containing the refactored names of all users
+    # messages : dictionary - containing keys of user names and data of total sent messages
+
+    # OUTPUT #
+    # airtimes  :   dictionary, keys are names, data is average air time
+
+    airtimes = {}
+    date_format = '%Y-%m-%d %H:%M:%S'
+
+    for user in users["name"]:
+        total_airtime = 0
+        for index in range(len(df)):
+            if df["user"][index] == user:
+                stamp = df["timestamp"][index]
+                print(f"As String : {type(stamp)}")
+                time = datetime.strptime(stamp, date_format)
+
+                print(f"Time = {time}, Type = {type(time)}")
+                if index + 1 < len(df):
+                    if total_airtime == 0:
+                        total_airtime = datetime.strptime(df["timestamp"][index + 1], date_format) - datetime.strptime(df["timestamp"][index], date_format)
+                    else:
+                        total_airtime += datetime.strptime(df["timestamp"][index + 1], date_format) - datetime.strptime(df["timestamp"][index], date_format)
+        print(f"{user} has {total_airtime} amount of airtime")
+
+        avg_airtime = total_airtime / messages[user]
+        airtimes[user] = avg_airtime
+    
+    print(airtimes)
+    return airtimes

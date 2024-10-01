@@ -51,3 +51,4 @@ Version 2.1 Goals
     - If the body has to shit out the same amount of poop, how big is each persons poop 
     - supervised and unsupervised ML models on the data 
     - Did anyone like their own messages?
+    - Graph of people that liked each person more and more to show best friends

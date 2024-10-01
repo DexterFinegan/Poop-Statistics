@@ -69,9 +69,15 @@ def recreating_updated_df(location):
     dirty_df = new_unclean_df(location)
     gifs = gifs_sent_by(dirty_df, "Jack")
     df = merge_messages_and_gifs(df, gifs, "Jack")
+    save_csv(df)
 
-#display_bar_chart_visual(location)
+using = False
 
-df = new_unclean_df(location)
-players = get_users(location, refactor=True)
-total_sent_likes(df, players)
+if using:
+    # For Most Airtime Award
+    display_bar_chart_visual(location)
+    unclean_df = new_unclean_df(location)
+    df = load_csv("save_file.csv")
+    users = get_users(location, True)
+    messages = total_sent_messages(unclean_df, users)
+    average_airtime(df, users, messages)
