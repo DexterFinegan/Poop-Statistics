@@ -115,7 +115,7 @@ def separate_users():
         for j in range(len(raw_data)):
             if raw_data["sender_name"][j] == user:
                 messages["content"].append(raw_data["content"][j])
-                messages["timestamp"].append(raw_data["timestamp_ms"][j])
+                messages["timestamp"].append(raw_data["timestamp"][j])
                 messages["reactions"].append(raw_data["reactions"][j])
                 messages["share"].append(raw_data["share"][j])
                 messages["audio_files"].append(raw_data["audio_files"][j])
@@ -162,12 +162,39 @@ def clean_users_poop_data(user):
                 elif char == " " and new_message != "":
                     messages["content"].append(new_message)
                     messages["timestamp"].append(MEGAFRAME["timestamp"][i])
-                    messages["reactions"].append("") 
+                    messages["reactions"].append("")    # Left for later 
                     new_message = ""
+            if new_message != "":
+                messages["content"].append(new_message)
+                messages["timestamp"].append(MEGAFRAME["timestamp"][i])
+                messages["reactions"].append("")    # Left for later 
+                new_message = ""
 
-    # Converting the messages dictionary into the refined MEGAFRAME DataFrame
     MEGAFRAME = pd.DataFrame(data=messages)
 
+        #### Refining to more likely numbers by comparing to the numberth message ####
+    messages = {"content" : [], "timestamp" : [], "reactions" : []}
+    for i in range(len(MEGAFRAME)):
+        number = int(MEGAFRAME["content"][i])
+        if i*0.3 < number < i*2:
+            messages["content"].append(number)
+            messages["timestamp"].append(MEGAFRAME["timestamp"][i])
+            messages["reactions"].append("")    # Left for later 
+    
+    MEGAFRAME = pd.DataFrame(data=messages)
+
+        #### Creating Chains of consecutive updates ####
+    chain = []
+    for i in range(len(MEGAFRAME)):
+        if len(chain) == 0:
+            chain.append(MEGAFRAME["content"][i])
+        else:
+            if int(MEGAFRAME["content"][i]) == int(chain[-1]):
+                chain.append(MEGAFRAME["content"][i]) 
+            else:
+                print(chain)
+                chain = []
+                
     # Saving DataFrame to csv file
     file_name = str(user) + "_Poops.csv"
     MEGAFRAME.to_csv(f"Save Files/Poops/{file_name}")
@@ -180,7 +207,7 @@ def correct_datetime_objects(df):
     # df    :   pandas Dataframe with a "timestamp" column
 
     # OUTPUT #
-    # df  :   pandas DataFrame with "timestamp" colum filled with corresponding datetime objects
+    # df  :   pandas DataFrame with "timestamp" colum filled with corresponding pandas datetime objects
 
     df['timestamp'] = pd.to_datetime(df['timestamp'], format='%Y-%m-%d %H:%M:%S')
     df["timestamp"] = df["timestamp"].dt.round("1s")
@@ -189,9 +216,6 @@ def correct_datetime_objects(df):
 
 
 # Call Space to work out kinks and represent data
-df = load_csv("Save Files/All_Raw_Data.csv")
+clean_users_poop_data("Dex")
 
-df = correct_datetime_objects(df)
 
-stamp = df["timestamp"][1]
-print(f"\nConverted Timestamp type : {type(stamp)}")
