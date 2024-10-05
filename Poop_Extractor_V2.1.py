@@ -160,12 +160,12 @@ def clean_users_poop_data(user):
                 if char in numbers:
                     new_message += char
                 elif char == " " and new_message != "":
-                    messages["content"].append(new_message)
+                    messages["content"].append(int(new_message))
                     messages["timestamp"].append(MEGAFRAME["timestamp"][i])
                     messages["reactions"].append("")    # Left for later 
                     new_message = ""
             if new_message != "":
-                messages["content"].append(new_message)
+                messages["content"].append(int(new_message))
                 messages["timestamp"].append(MEGAFRAME["timestamp"][i])
                 messages["reactions"].append("")    # Left for later 
                 new_message = ""
@@ -184,17 +184,41 @@ def clean_users_poop_data(user):
     MEGAFRAME = pd.DataFrame(data=messages)
 
         #### Creating Chains of consecutive updates ####
-    chain = []
-    for i in range(len(MEGAFRAME)):
-        if len(chain) == 0:
-            chain.append(MEGAFRAME["content"][i])
+    chain = [MEGAFRAME["content"][0]]
+    messages = {"content" : [], "timestamp" : [], "reactions" : []}
+    for i in range(1, len(MEGAFRAME)):
+        if int(MEGAFRAME["content"][i]) == int(chain[-1]) + 1:
+            chain.append(MEGAFRAME["content"][i]) 
         else:
-            if int(MEGAFRAME["content"][i]) == int(chain[-1]):
-                chain.append(MEGAFRAME["content"][i]) 
-            else:
-                print(chain)
-                chain = []
-                
+            if len(chain) > 1:
+                for update in chain:
+                    messages["content"].append(update)
+                    messages["timestamp"].append(MEGAFRAME["timestamp"][i])
+                    messages["reactions"].append("")    # Left for later 
+            chain = [MEGAFRAME["content"][i]]
+    MEGAFRAME = pd.DataFrame(data=messages)
+
+        #### Filling in missing data by evenly spacing missed updates in their correct places ####
+    messages = {"content" : [], "timestamp" : [], "reactions" : []}
+    update_number = 1
+    correct_datetime_objects(MEGAFRAME)
+    for i in range(len(MEGAFRAME)):
+        if MEGAFRAME["content"][i] == update_number:
+            messages["content"].append(MEGAFRAME["content"][i])
+            messages["timestamp"].append(MEGAFRAME["timestamp"][i])
+            messages["reactions"].append("")    # Left for later 
+            update_number += 1
+        elif i != 0: # Add caveat if its the first index
+            missing_updates = MEGAFRAME["content"][i] - MEGAFRAME["content"][i-1]
+            time_period = abs(MEGAFRAME["timestamp"][i - 1] - MEGAFRAME["timestamp"][i])
+            for j in range(missing_updates):
+                messages["content"].append(update_number + j)
+                messages["timestamp"].append(MEGAFRAME["timestamp"][i - 1] + time_period*(j+1)/missing_updates)
+                messages["reactions"].append("")    # Left for later
+            update_number += missing_updates
+
+    MEGAFRAME = pd.DataFrame(data=messages)
+
     # Saving DataFrame to csv file
     file_name = str(user) + "_Poops.csv"
     MEGAFRAME.to_csv(f"Save Files/Poops/{file_name}")
@@ -216,6 +240,15 @@ def correct_datetime_objects(df):
 
 
 # Call Space to work out kinks and represent data
-clean_users_poop_data("Dex")
+using = False
+if using:
+    users = pd.read_csv("Save Files/Users.csv")
+    for i in range(len(users)):
+        user = users["name"][i]
+        clean_users_poop_data(user)
+
+clean_users_poop_data("Ros")
+
+
 
 
