@@ -6,8 +6,8 @@
 import pandas as pd
 import os
 import json
+import ast
 from Clean import *
-from datetime import datetime
 
 DIRECTORY = "DATA/messages/inbox/weaponsofassdestruction"
 
@@ -44,7 +44,8 @@ def extract_raw_data(directory):
                                         "Ros Hanley": "Ros",
                                         "Jack McRann": "Jack",
                                         "lalala lucky to have me here": "Soumia",
-                                        "Katie Long": "Katie" }, inplace=True)
+                                        "Katie Long": "Katie",
+                                        "Conan Davis": "Conan" }, inplace=True)
     
     # Reversing indexes to be in chronological order 
     MEGAFRAME = MEGAFRAME.reset_index(drop=True)
@@ -191,33 +192,48 @@ def clean_users_poop_data(user):
             chain.append(MEGAFRAME["content"][i]) 
         else:
             if len(chain) > 1:
-                for update in chain:
-                    messages["content"].append(update)
-                    messages["timestamp"].append(MEGAFRAME["timestamp"][i])
+                for j in range(len(chain)):
+                    backtracking = len(chain) - j
+                    messages["content"].append(chain[j])
+                    messages["timestamp"].append(MEGAFRAME["timestamp"][i - backtracking])
                     messages["reactions"].append("")    # Left for later 
             chain = [MEGAFRAME["content"][i]]
     MEGAFRAME = pd.DataFrame(data=messages)
 
+        #### Checking for and removing duplicate updates ####
+    all_updates = list(MEGAFRAME["content"])
+    if len(all_updates) != len(set(all_updates)):
+        messages = {"content" : [], "timestamp" : [], "reactions" : []}
+        for i in range(len(all_updates)):
+            if all_updates[i] not in messages["content"]:
+                messages["content"].append(MEGAFRAME["content"][i])
+                messages["timestamp"].append(MEGAFRAME["timestamp"][i])
+                messages["reactions"].append("")    # Left for later
+    MEGAFRAME = pd.DataFrame(data=messages)
+
         #### Filling in missing data by evenly spacing missed updates in their correct places ####
-    messages = {"content" : [], "timestamp" : [], "reactions" : []}
-    update_number = 1
+    messages = {"content" : [MEGAFRAME["content"][0]], "timestamp" : [MEGAFRAME["timestamp"][0]], "reactions" : [""]}
     correct_datetime_objects(MEGAFRAME)
-    for i in range(len(MEGAFRAME)):
-        if MEGAFRAME["content"][i] == update_number:
+
+    # The rest of the updates
+    for i in range(1, len(MEGAFRAME)):
+        print(i)
+        print(MEGAFRAME["content"][i])
+        print(messages["content"][i - 1])
+        if MEGAFRAME["content"][i] == messages["content"][i - 1] + 1:
+            print("True")
             messages["content"].append(MEGAFRAME["content"][i])
             messages["timestamp"].append(MEGAFRAME["timestamp"][i])
-            messages["reactions"].append("")    # Left for later 
-            update_number += 1
-        elif i != 0: # Add caveat if its the first index
+            messages["reactions"].append("")    # Left for later
+        else: 
             missing_updates = MEGAFRAME["content"][i] - MEGAFRAME["content"][i-1]
             time_period = abs(MEGAFRAME["timestamp"][i - 1] - MEGAFRAME["timestamp"][i])
             for j in range(missing_updates):
-                messages["content"].append(update_number + j)
+                messages["content"].append(MEGAFRAME["content"][i - 1] + j + 1)
                 messages["timestamp"].append(MEGAFRAME["timestamp"][i - 1] + time_period*(j+1)/missing_updates)
                 messages["reactions"].append("")    # Left for later
-            update_number += missing_updates
-
-    MEGAFRAME = pd.DataFrame(data=messages)
+            
+        MEGAFRAME = pd.DataFrame(data=messages)
 
     # Saving DataFrame to csv file
     file_name = str(user) + "_Poops.csv"
@@ -239,15 +255,67 @@ def correct_datetime_objects(df):
     return df
 
 
+# Function to calculate number of likes sent to a particular person from all other users as a dictionary
+def likes_roster(users, selected_user):
+    # INPUT #
+    # users :   pandas Dataframe of all users
+    # selected_user  :   string of the selected user
+
+    # OUTPUT #
+    # roster :  list of every other user's likes to you
+
+    # Loading users messages and creating other users dictionary
+    if selected_user != "all":
+        all_messages = pd.read_csv(f"Save Files/Messages/{selected_user}_Messages.csv")
+    else:
+        all_messages = pd.read_csv("Save Files/All_Raw_Data.csv")
+    roster = {}
+    for user in users["name"]:
+        roster[user] = 0
+
+    # Iterating through messages and counting likes
+    for reaction in all_messages["reactions"]:
+        if not pd.isna(reaction):
+            if "x93¸ð" in reaction:
+                roster["Eoin"] += 1
+            if "Stephen Allen" in reaction:
+                roster["Stephen"] += 1
+            if "Conor Mcmenamin" in reaction:
+                roster["Conor"] += 1
+            if "Dan Griffin" in reaction:
+                roster["Dan"] += 1
+            if "Ros Hanley" in reaction:
+                roster["Ros"] += 1
+            if "Jack McRann" in reaction:
+                roster["Jack"] += 1
+            if "Conan" in reaction:
+                roster["Conan"] += 1
+            if "lalala lucky to have me here" in reaction:
+                roster["Soumia"] += 1
+            if "Katie Long" in reaction:
+                roster["Katie"] += 1
+            if "Dex" in reaction:
+                roster["Dex"] += 1
+
+    # Note : Could not change reactions list/dictionary from dtring back to list/dictionary so had to find thru string, must fix
+    return roster
+
+
 # Call Space to work out kinks and represent data
-using = False
+using = True
 if using:
     users = pd.read_csv("Save Files/Users.csv")
-    for i in range(len(users)):
-        user = users["name"][i]
-        clean_users_poop_data(user)
+    user = "Stephen"
+    roster = likes_roster(users, user)
 
-clean_users_poop_data("Ros")
+    print(f"{user}'s Roster : {roster}")
+
+    all_likes = likes_roster(users, "all")
+    percentages = {}
+    for user in roster.keys():
+        percentages[user] = roster[user]/all_likes[user] * 100
+
+    print(f"Percentages : {percentages}")
 
 
 
