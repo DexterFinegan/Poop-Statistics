@@ -7,6 +7,7 @@ import pandas as pd
 import os
 import json
 import ast
+from matplotlib import pyplot as plt
 from Clean import *
 
 DIRECTORY = "DATA/messages/inbox/weaponsofassdestruction"
@@ -177,14 +178,14 @@ def clean_users_poop_data(user):
     messages = {"content" : [], "timestamp" : [], "reactions" : []}
     for i in range(len(MEGAFRAME)):
         number = int(MEGAFRAME["content"][i])
-        if i*0.3 < number < i*2:
+        if i*0.3 < number < i*2 and number < 600:
             messages["content"].append(number)
             messages["timestamp"].append(MEGAFRAME["timestamp"][i])
             messages["reactions"].append("")    # Left for later 
     
     MEGAFRAME = pd.DataFrame(data=messages)
 
-        #### Creating Chains of consecutive updates ####
+    """    #### Creating Chains of consecutive updates ####
     chain = [MEGAFRAME["content"][0]]
     messages = {"content" : [], "timestamp" : [], "reactions" : []}
     for i in range(1, len(MEGAFRAME)):
@@ -232,8 +233,8 @@ def clean_users_poop_data(user):
                 messages["content"].append(MEGAFRAME["content"][i - 1] + j + 1)
                 messages["timestamp"].append(MEGAFRAME["timestamp"][i - 1] + time_period*(j+1)/missing_updates)
                 messages["reactions"].append("")    # Left for later
-            
-        MEGAFRAME = pd.DataFrame(data=messages)
+     """       
+        # MEGAFRAME = pd.DataFrame(data=messages)
 
     # Saving DataFrame to csv file
     file_name = str(user) + "_Poops.csv"
@@ -301,21 +302,30 @@ def likes_roster(users, selected_user):
     return roster
 
 
+# Function to display poops on a graph, used to verify if clean poops function works
+def display_poops(user):
+    # INPUTS
+    # user      :   String - the users refactored name to be plotted on a graph
+
+    # Loading relevant file
+    MEGAFRAME = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
+    poops = MEGAFRAME["content"]
+
+    plt.plot(poops, "o")
+
+    plt.xlabel("Entry")
+    plt.ylabel("Poop Number")
+    plt.title("Poop Cleaning Consistency")
+
+    plt.show()
+
+
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    users = pd.read_csv("Save Files/Users.csv")
-    user = "Stephen"
-    roster = likes_roster(users, user)
-
-    print(f"{user}'s Roster : {roster}")
-
-    all_likes = likes_roster(users, "all")
-    percentages = {}
-    for user in roster.keys():
-        percentages[user] = roster[user]/all_likes[user] * 100
-
-    print(f"Percentages : {percentages}")
+    clean_users_poop_data("Dex")
+    display_poops("Dex")
+    
 
 
 
