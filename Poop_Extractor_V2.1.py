@@ -176,65 +176,64 @@ def clean_users_poop_data(user):
 
         #### Refining to more likely numbers by comparing to the numberth message ####
     messages = {"content" : [], "timestamp" : [], "reactions" : []}
+    count = 1
     for i in range(len(MEGAFRAME)):
         number = int(MEGAFRAME["content"][i])
-        if i*0.3 < number < i*2 and number < 600:
+        if count*0.4 < number < count*1.6:
+            count += 1
             messages["content"].append(number)
             messages["timestamp"].append(MEGAFRAME["timestamp"][i])
             messages["reactions"].append("")    # Left for later 
     
     MEGAFRAME = pd.DataFrame(data=messages)
 
-    """    #### Creating Chains of consecutive updates ####
-    chain = [MEGAFRAME["content"][0]]
-    messages = {"content" : [], "timestamp" : [], "reactions" : []}
-    for i in range(1, len(MEGAFRAME)):
-        if int(MEGAFRAME["content"][i]) == int(chain[-1]) + 1:
-            chain.append(MEGAFRAME["content"][i]) 
+        #### Making a list of chains of consecutive numbers ####
+    chains = []
+    chain = []
+    for i in range(len(MEGAFRAME)):
+        print(MEGAFRAME[i])
+        if len(chain) == 0:
+            chain.append(MEGAFRAME["content"][i])
         else:
-            if len(chain) > 1:
-                for j in range(len(chain)):
-                    backtracking = len(chain) - j
-                    messages["content"].append(chain[j])
-                    messages["timestamp"].append(MEGAFRAME["timestamp"][i - backtracking])
-                    messages["reactions"].append("")    # Left for later 
-            chain = [MEGAFRAME["content"][i]]
-    MEGAFRAME = pd.DataFrame(data=messages)
+            if MEGAFRAME["content"][i] == chain[-1] + 1:
+                chain.append(MEGAFRAME["content"][i])
+            else:
+                chains.append(chain)
+                chain = [MEGAFRAME["content"][i]]
+    if len(chain) > 0:
+        chains.append(chain)
 
-        #### Checking for and removing duplicate updates ####
-    all_updates = list(MEGAFRAME["content"])
-    if len(all_updates) != len(set(all_updates)):
-        messages = {"content" : [], "timestamp" : [], "reactions" : []}
-        for i in range(len(all_updates)):
-            if all_updates[i] not in messages["content"]:
-                messages["content"].append(MEGAFRAME["content"][i])
-                messages["timestamp"].append(MEGAFRAME["timestamp"][i])
-                messages["reactions"].append("")    # Left for later
-    MEGAFRAME = pd.DataFrame(data=messages)
+        #### Making a list of long chains ####
+    long_chains = [] 
+    for chain in chains:
+        if len(chain) > 1:
+            long_chains.append(chain)
+    
+        #### Joining consecutive long chains ####
+    refined_long_chains = []
+    new_chain = []
+    for i in range(len(long_chains)):
+        if len(new_chain) == 0:
+            new_chain = long_chains[i]
+        else:
+            if long_chains[i][0] == new_chain[-1] + 1:
+                for number in long_chains[i]:
+                    new_chain.append(number)
+            elif long_chains[i][0] == new_chain[-1]:
+                for number in long_chains[i][1:]:
+                    new_chain.append(number)
+            else:
+                refined_long_chains.append(new_chain)
+                new_chain = long_chains[i]
+    refined_long_chains.append(new_chain)
 
-        #### Filling in missing data by evenly spacing missed updates in their correct places ####
-    messages = {"content" : [MEGAFRAME["content"][0]], "timestamp" : [MEGAFRAME["timestamp"][0]], "reactions" : [""]}
-    correct_datetime_objects(MEGAFRAME)
+        #### Checking if chains over lap ####
+    final_count = []
+    for chain in refined_long_chains:
+        final_count += chain
+    final_count = set(final_count)
 
-    # The rest of the updates
-    for i in range(1, len(MEGAFRAME)):
-        print(i)
-        print(MEGAFRAME["content"][i])
-        print(messages["content"][i - 1])
-        if MEGAFRAME["content"][i] == messages["content"][i - 1] + 1:
-            print("True")
-            messages["content"].append(MEGAFRAME["content"][i])
-            messages["timestamp"].append(MEGAFRAME["timestamp"][i])
-            messages["reactions"].append("")    # Left for later
-        else: 
-            missing_updates = MEGAFRAME["content"][i] - MEGAFRAME["content"][i-1]
-            time_period = abs(MEGAFRAME["timestamp"][i - 1] - MEGAFRAME["timestamp"][i])
-            for j in range(missing_updates):
-                messages["content"].append(MEGAFRAME["content"][i - 1] + j + 1)
-                messages["timestamp"].append(MEGAFRAME["timestamp"][i - 1] + time_period*(j+1)/missing_updates)
-                messages["reactions"].append("")    # Left for later
-     """       
-        # MEGAFRAME = pd.DataFrame(data=messages)
+
 
     # Saving DataFrame to csv file
     file_name = str(user) + "_Poops.csv"
