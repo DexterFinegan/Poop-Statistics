@@ -142,7 +142,7 @@ def clean_users_poop_data(user):
 
     # Loading relevant file
     MEGAFRAME = pd.read_csv(f"Save Files/Messages/{user}_Messages.csv")
-    print(f"Beginning to clean {user}'s Poop Data\n\n")
+    print(f"Beginning to clean {user}'s Poop Data\n")
 
     # Dropping Irrelevant headers (keeping reactions for further use but to be dormant for now)
     drop_list = ["share", "audio_files", "photos", "videos", "call_duration"]
@@ -179,7 +179,7 @@ def clean_users_poop_data(user):
     count = 1
     for i in range(len(MEGAFRAME)):
         number = int(MEGAFRAME["content"][i])
-        if count*0.4 < number < count*1.6:
+        if count*0.4 < number <= count*2:
             count += 1
             messages["content"].append(number)
             messages["timestamp"].append(MEGAFRAME["timestamp"][i])
@@ -191,15 +191,14 @@ def clean_users_poop_data(user):
     chains = []
     chain = []
     for i in range(len(MEGAFRAME)):
-        print(MEGAFRAME[i])
         if len(chain) == 0:
-            chain.append(MEGAFRAME["content"][i])
+            chain.append([MEGAFRAME["content"][i], MEGAFRAME["timestamp"][i], MEGAFRAME["reactions"][i]])
         else:
-            if MEGAFRAME["content"][i] == chain[-1] + 1:
-                chain.append(MEGAFRAME["content"][i])
+            if MEGAFRAME["content"][i] == chain[-1][0] + 1:
+                chain.append([MEGAFRAME["content"][i], MEGAFRAME["timestamp"][i], MEGAFRAME["reactions"][i]])
             else:
                 chains.append(chain)
-                chain = [MEGAFRAME["content"][i]]
+                chain = [[MEGAFRAME["content"][i], MEGAFRAME["timestamp"][i], MEGAFRAME["reactions"][i]]]
     if len(chain) > 0:
         chains.append(chain)
 
@@ -216,12 +215,12 @@ def clean_users_poop_data(user):
         if len(new_chain) == 0:
             new_chain = long_chains[i]
         else:
-            if long_chains[i][0] == new_chain[-1] + 1:
-                for number in long_chains[i]:
-                    new_chain.append(number)
-            elif long_chains[i][0] == new_chain[-1]:
-                for number in long_chains[i][1:]:
-                    new_chain.append(number)
+            if long_chains[i][0][0] == new_chain[-1][0] + 1:
+                for j in range(len(long_chains[i])):
+                    new_chain.append(long_chains[i][j])
+            elif long_chains[i][0][0] == new_chain[-1][0]:
+                for j in range(len(long_chains[i]) - 1):
+                    new_chain.append(long_chains[i][j+1])
             else:
                 refined_long_chains.append(new_chain)
                 new_chain = long_chains[i]
@@ -231,15 +230,21 @@ def clean_users_poop_data(user):
     final_count = []
     for chain in refined_long_chains:
         final_count += chain
-    final_count = set(final_count)
 
-
+        #### Converting back to messages dictionary ####
+    messages = {"content" : [], "timestamp" : [], "reactions" : []}
+    for update in final_count:
+        messages["content"].append(update[0])
+        messages["timestamp"].append(update[1])
+        messages["reactions"].append(update[2])
+    
+    MEGAFRAME = pd.DataFrame(data=messages)
 
     # Saving DataFrame to csv file
     file_name = str(user) + "_Poops.csv"
     MEGAFRAME.to_csv(f"Save Files/Poops/{file_name}")
 
-    print(f"\n{user}'s Poops have been Successfully Cleaned and Saved\n")
+    print(f"{user}'s Poops have been Successfully Cleaned and Saved\n")
 
 # Function to correct loaded dataframe to have string timestamps to datetime.datetime objects
 def correct_datetime_objects(df):
@@ -253,7 +258,6 @@ def correct_datetime_objects(df):
     df["timestamp"] = df["timestamp"].dt.round("1s")
 
     return df
-
 
 # Function to calculate number of likes sent to a particular person from all other users as a dictionary
 def likes_roster(users, selected_user):
@@ -300,7 +304,6 @@ def likes_roster(users, selected_user):
     # Note : Could not change reactions list/dictionary from dtring back to list/dictionary so had to find thru string, must fix
     return roster
 
-
 # Function to display poops on a graph, used to verify if clean poops function works
 def display_poops(user):
     # INPUTS
@@ -319,13 +322,28 @@ def display_poops(user):
     plt.show()
 
 
+# Function to re-do all functions to reset the data when downloading the data again
+def remake_files(directory):
+    # Extraction
+    extract_raw_data(directory)
+    get_users(directory)
+    separate_users()
+
+    # Cleaning
+    users = pd.read_csv("Save Files/Users.csv")
+    for user in users["name"]:
+        clean_users_poop_data(user)
+
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    clean_users_poop_data("Dex")
-    display_poops("Dex")
+    suser = "Dex"
+    clean_users_poop_data(suser)
+    display_poops(suser)
     
 
-
+#### NOTES ####
+# Conor (fixed) & Jack's poops are fucked
+# Double check on Soumia's, she's got a small jump
 
 
