@@ -7,6 +7,7 @@ import pandas as pd
 import os
 import json
 import ast
+import seaborn as sns
 from matplotlib import pyplot as plt
 from Clean import *
 
@@ -321,7 +322,6 @@ def display_poops(user):
 
     plt.show()
 
-
 # Function to re-do all functions to reset the data when downloading the data again
 def remake_files(directory):
     # Extraction
@@ -334,16 +334,45 @@ def remake_files(directory):
     for user in users["name"]:
         clean_users_poop_data(user)
 
+# Function to create a heatmap of time of day for each poop of a user
+def daily_poop_heatmap(user):
+    # INPUT
+    # user      : String of refactored user name to be plotted
+
+    # OUTPUT
+    # seaborns heatmap of the time of day the user updates
+
+    # Loading and configuring data
+    df = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+
+    df["hour"] = df["timestamp"].dt.hour
+    hourly_counts = df['hour'].value_counts().sort_index()
+    hourly_counts = hourly_counts.reindex(range(24), fill_value=0)
+
+    sns.heatmap(hourly_counts)
+
+
 # Call Space to work out kinks and represent data
-using = True
+using = False
 if using:
-    suser = "Dex"
-    clean_users_poop_data(suser)
-    display_poops(suser)
-    
+    daily_poop_heatmap("Conor")
 
-#### NOTES ####
-# Conor (fixed) & Jack's poops are fucked
-# Double check on Soumia's, she's got a small jump
+    # Loading and configuring data
+    df = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
 
+    df["hour"] = df["timestamp"].dt.hour
+    hourly_counts = df['hour'].value_counts().sort_index()
+    hourly_counts = hourly_counts.reindex(range(24), fill_value=0)
 
+    # Plotting onto a heatmap
+    plt.figure(figsize=(12, 2))
+    sns.heatmap([hourly_counts], cmap='YlGnBu', annot=True, fmt='d', cbar_kws={'label': 'Number of Entries'},
+                xticklabels=hourly_counts.index, yticklabels=['Entries'])
+    plt.title('Number of Entries per Hour of Day (Across All Days)')
+    plt.xlabel('Hour of Day')
+    plt.ylabel('')
+    plt.show()
+
+daily_poop_heatmap("Dex")
