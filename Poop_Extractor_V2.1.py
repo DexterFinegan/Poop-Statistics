@@ -6,10 +6,8 @@
 import pandas as pd
 import os
 import json
-import ast
 import seaborn as sns
 from matplotlib import pyplot as plt
-from Clean import *
 
 DIRECTORY = "DATA/messages/inbox/weaponsofassdestruction"
 
@@ -335,9 +333,10 @@ def remake_files(directory):
         clean_users_poop_data(user)
 
 # Function to create a heatmap of time of day for each poop of a user
-def daily_poop_heatmap(user):
+def daily_poop_heatmap(user, separate_days=False):
     # INPUT
-    # user      : String of refactored user name to be plotted
+    # user          : String of refactored user name to be plotted
+    # separate_days : Bool saying whether it should be accumulated to one day or a week
 
     # OUTPUT
     # seaborns heatmap of the time of day the user updates
@@ -346,33 +345,78 @@ def daily_poop_heatmap(user):
     df = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
     df["timestamp"] = pd.to_datetime(df["timestamp"])
 
-    df["hour"] = df["timestamp"].dt.hour
-    hourly_counts = df['hour'].value_counts().sort_index()
-    hourly_counts = hourly_counts.reindex(range(24), fill_value=0)
+    if not separate_days:
+        df["hour"] = df["timestamp"].dt.hour
 
-    sns.heatmap(hourly_counts)
+        # Count the number of entries for each hour
+        hour_counts = df["hour"].value_counts().sort_index()
+
+        # Convert to a dataframe and reshape for heatmap
+        heatmap_data = hour_counts.reindex(range(24), fill_value=0).to_frame()
+        heatmap_data.columns = ["Counts"]
+
+        # Create the heatmap
+        plt.figure(figsize=(4, 8))  # Adjust figure size for vertical orientation
+        sns.heatmap(
+            heatmap_data,
+            annot=False,
+            fmt="d",
+            cmap="Blues",
+            cbar=True,
+            xticklabels=False,  # Optionally hide x-axis labels
+            yticklabels=range(24)  # Ensure y-axis shows hours of the day
+        )
+        plt.ylabel("Hour of Day")
+        plt.xlabel(f"{user}'s Heatmap")
+        plt.title("Poop Heatmap")
+        plt.show()
+    else:
+        df["hour"] = df["timestamp"].dt.hour
+        df["day_of_week"] = df["timestamp"].dt.day_name()
+
+        # Count the number of entries for each combination of hour and day
+        heatmap_data = (
+            df.groupby(["day_of_week", "hour"])
+            .size()
+            .unstack(fill_value=0)
+            .astype(int)  # Ensure integer dtype for annotation
+            .reindex(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
+        )
+
+        # Create the heatmaps
+        fig, axes = plt.subplots(1, 7, figsize=(20, 8), sharey=True)
+
+        for ax, (day, data) in zip(axes, heatmap_data.iterrows()):
+            sns.heatmap(
+                data.to_frame(),  # No transpose needed, as hours are naturally rows
+                annot=True,
+                fmt="g",
+                cmap="Blues",
+                cbar=False,  # Disable individual colorbars
+                ax=ax,
+                xticklabels=False,  # Hide x-axis labels
+                yticklabels=False  # Show y-axis labels (hours of the day)
+            )
+            ax.set_title(day)
+            if ax != axes[0]:
+                ax.set_ylabel("")  # Remove redundant y-axis labels
+            else:
+                ax.set_ylabel("Hour of Day")
+
+        # Add a global colorbar
+        plt.subplots_adjust(wspace=0.4)
+        cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+        sns.heatmap(
+            heatmap_data,
+            cmap="Blues",
+            cbar=True,
+            cbar_ax=cbar_ax,
+            cbar_kws={'label': 'Entry Counts'}
+        )
+        plt.show()
 
 
 # Call Space to work out kinks and represent data
-using = False
+using = True
 if using:
-    daily_poop_heatmap("Conor")
-
-    # Loading and configuring data
-    df = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
-
-    df["hour"] = df["timestamp"].dt.hour
-    hourly_counts = df['hour'].value_counts().sort_index()
-    hourly_counts = hourly_counts.reindex(range(24), fill_value=0)
-
-    # Plotting onto a heatmap
-    plt.figure(figsize=(12, 2))
-    sns.heatmap([hourly_counts], cmap='YlGnBu', annot=True, fmt='d', cbar_kws={'label': 'Number of Entries'},
-                xticklabels=hourly_counts.index, yticklabels=['Entries'])
-    plt.title('Number of Entries per Hour of Day (Across All Days)')
-    plt.xlabel('Hour of Day')
-    plt.ylabel('')
-    plt.show()
-
-daily_poop_heatmap("Dex")
+    daily_poop_heatmap("Stephen", True)
