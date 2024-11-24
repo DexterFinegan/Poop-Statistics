@@ -399,6 +399,7 @@ def likes_received(selected_user, total=False, just_poops=False, display=False):
 
     # OUTPUTS
     # data              : dictionary of every users name as a key a number of likes given to the selected user as the data
+    # total_likes       : Integer of the total likes received by this user
 
     # Setting up the list and dictionary
     users = pd.read_csv("Save Files/Users.csv")
@@ -441,7 +442,84 @@ def likes_received(selected_user, total=False, just_poops=False, display=False):
     else:
         return data
 
+# Function to acquire an compare the total likes of each user
+def total_likes_received(just_poops=False, display=False):
+    # INPUTS
+    # just_poops        : Bool whether to investigate just poop messages
+    # display           : Bool whether to display information into a pie chart
+
+    # OUTPUTS
+    # total_likes       : Dictionary of each user and their total received likes
+
+    # Creating workspace
+    users = pd.read_csv("Save Files/Users.csv")["name"]
+    total_likes = {}
+    for name in users:
+        data, likes = likes_received(name, total=True, just_poops=just_poops)
+        total_likes[name] = likes
+    
+    # Creating Pie Chart
+    if display:
+        labels = []
+        slices = []
+        for name in total_likes.keys():
+            label = name + " " + str(total_likes[name])
+            labels.append(label)
+            slices.append(total_likes[name])
+
+        plt.pie(slices, labels=labels)
+        plt.title(f"Likes Received Comaprison")
+        plt.show()
+    
+# Function to generate how many likes a selected user has given
+def total_likes_given(just_poops=False, display=False, self_provided=False):
+    # INPUTS
+    # just_poops    : Bool whether to investigate just the poop messages
+    # display       : Bool whether to display total information
+    # self_provided  : Bool whether to create a new dictionary of total likes given to ones' self
+
+    # OUTPUTS
+    # given_likes   : Dictionary of all users and the amount of likes they've given
+    # self_provided_likes   : Dictionary of all users number of likes given to themselves
+
+    # Setting up workspace
+    users = pd.read_csv("Save Files/Users.csv")["name"]
+    given_likes = {}
+    self_provided_likes = {}
+    for name in users:
+        given_likes[name] = 0
+        self_provided_likes[name] = 0
+    
+    for name in users:
+        data = likes_received(selected_user=name, just_poops=just_poops)
+        for name2 in data.keys():
+            if name2 != name:
+                given_likes[name2] += data[name2]
+            else:
+                if self_provided:
+                    self_provided_likes[name] += data[name]
+
+    
+    # Creating Pie Chart
+    if display:
+        labels = []
+        slices = []
+        for name in given_likes.keys():
+            label = name + " " + str(given_likes[name])
+            labels.append(label)
+            slices.append(given_likes[name])
+
+        plt.pie(slices, labels=labels)
+        plt.title(f"Likes Given Comaprison")
+        plt.show()
+    
+    if self_provided:
+        return given_likes, self_provided_likes
+    else:
+        return given_likes
+
+
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    likes_received("Ros", total = True, display=True)
+    print(total_likes_given(just_poops=False, display=False, self_provided=True))
