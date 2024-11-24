@@ -518,8 +518,45 @@ def total_likes_given(just_poops=False, display=False, self_provided=False):
     else:
         return given_likes
 
+# Function to find the biggest content sharer (links, gifs & photos)
+def biggest_content_sharer(display=False):
+    # INPUTS
+    # display       : Bool whether to display data on a pie chart
+
+    # OUTPUTS
+    # sharers       : dictionary of all users and how much they've shared to the chat
+
+    all_data = pd.read_csv("Save Files/All_Raw_Data.csv")
+    users = pd.read_csv("Save Files/Users.csv")["name"]
+
+    sharers = {}
+    for name in users:
+        sharers[name] = 0
+
+    for i in range(len(all_data["share"])):
+        if not pd.isna(all_data["share"][i]):
+            sharers[all_data["sender_name"][i]] += 1
+
+    for i in range(len(all_data["photos"])):
+        if not pd.isna(all_data["photos"][i]):
+            sharers[all_data["sender_name"][i]] += 1
+    
+    # Creating Pie Chart
+    if display:
+        labels = []
+        slices = []
+        for name in sharers.keys():
+            label = name + " " + str(sharers[name])
+            labels.append(label)
+            slices.append(sharers[name])
+
+        plt.pie(slices, labels=labels)
+        plt.title(f"Content Sharers")
+        plt.show()
+
+    return sharers
 
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    print(total_likes_given(just_poops=False, display=False, self_provided=True))
+    biggest_content_sharer(display=True)

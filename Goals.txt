@@ -26,9 +26,9 @@ Version 1 & 2 Goals
 Version 2.1 Goals
     - Have Save Files for each user's poops + a total poops dataframe                                       X
     - Create Heatmap per user of time updated, and for the group each day of the week                       X
-    - Biggest Like Giver
+    - Biggest Like Giver                                                                                    X
     - Most Versatile Reactor
-    - Biggest Content Sharer
+    - Biggest Content Sharer                                                                                X
     - Extrapolated data for lifetime poops 
     - Plot to compare poops per hour/per waking hour
     - Calculation to see how much money each person could earn if they pooped on work time 
