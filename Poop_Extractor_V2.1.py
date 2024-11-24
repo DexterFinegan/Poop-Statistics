@@ -359,64 +359,71 @@ def daily_poop_heatmap(user, separate_days=False):
         plt.figure(figsize=(4, 8))  # Adjust figure size for vertical orientation
         sns.heatmap(
             heatmap_data,
-            annot=False,
+            annot=True,
             fmt="d",
             cmap="Blues",
             cbar=True,
-            xticklabels=False,  # Optionally hide x-axis labels
-            yticklabels=range(24)  # Ensure y-axis shows hours of the day
+            xticklabels=False,  
+            yticklabels=range(24), 
+            annot_kws={"size": 7}
         )
         plt.ylabel("Hour of Day")
-        plt.xlabel(f"{user}'s Heatmap")
-        plt.title("Poop Heatmap")
+        plt.title(f"{user}'s Daily Poop Heatmap")
         plt.show()
     else:
         df["hour"] = df["timestamp"].dt.hour
         df["day_of_week"] = df["timestamp"].dt.day_name()
+        
+        hours = range(24)  
+        days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-        # Count the number of entries for each combination of hour and day
+        # Create a complete index of days and hours
         heatmap_data = (
             df.groupby(["day_of_week", "hour"])
             .size()
-            .unstack(fill_value=0)
-            .astype(int)  # Ensure integer dtype for annotation
-            .reindex(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
+            .unstack(fill_value=0)  
+            .reindex(index=days, columns=hours, fill_value=0)  
         )
+        
+        vmin, vmax = heatmap_data.values.min(), heatmap_data.values.max()
 
         # Create the heatmaps
         fig, axes = plt.subplots(1, 7, figsize=(20, 8), sharey=True)
+        cmap = sns.color_palette("Blues", as_cmap=True)
 
         for ax, (day, data) in zip(axes, heatmap_data.iterrows()):
             sns.heatmap(
-                data.to_frame(),  # No transpose needed, as hours are naturally rows
+                data.to_frame(), 
                 annot=True,
                 fmt="g",
                 cmap="Blues",
-                cbar=False,  # Disable individual colorbars
+                cbar=False,  
+                vmin = vmin,
+                vmax = vmax,
                 ax=ax,
-                xticklabels=False,  # Hide x-axis labels
-                yticklabels=False  # Show y-axis labels (hours of the day)
+                xticklabels=True, 
+                yticklabels=range(24),
+                annot_kws={"size": 6}
             )
             ax.set_title(day)
-            if ax != axes[0]:
-                ax.set_ylabel("")  # Remove redundant y-axis labels
-            else:
+            if ax == axes[0]:
                 ax.set_ylabel("Hour of Day")
+            else:
+                ax.set_ylabel("")
 
-        # Add a global colorbar
+        # Add a single global color bar
+        cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])  
+        norm = plt.Normalize(vmin=vmin, vmax=vmax) 
+        sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+        sm.set_array([])  
+        fig.colorbar(sm, cax=cbar_ax, label="Entry Counts")
+
         plt.subplots_adjust(wspace=0.4)
-        cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
-        sns.heatmap(
-            heatmap_data,
-            cmap="Blues",
-            cbar=True,
-            cbar_ax=cbar_ax,
-            cbar_kws={'label': 'Entry Counts'}
-        )
+        fig.suptitle(f"{user}'s Weekly Poop Heatmap", fontsize=16)
         plt.show()
 
 
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    daily_poop_heatmap("Stephen", True)
+    daily_poop_heatmap("Ros", False)
