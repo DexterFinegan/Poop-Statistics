@@ -29,7 +29,7 @@ Version 2.1 Goals
     - Biggest Like Giver                                                                                    X
     - Most Versatile Reactor
     - Biggest Content Sharer                                                                                X
-    - Extrapolated data for lifetime poops 
+    - Extrapolated data for lifetime poops                                                                  X 
     - Plot to compare poops per hour/per waking hour
     - Calculation to see how much money each person could earn if they pooped on work time 
     - Plot to compare the impact of weather/holidays on poops

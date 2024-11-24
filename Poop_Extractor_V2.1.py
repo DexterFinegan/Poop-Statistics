@@ -9,6 +9,7 @@ import json
 import ast
 import seaborn as sns
 from matplotlib import pyplot as plt
+from datetime import datetime, date, timedelta
 
 DIRECTORY = "DATA/messages/inbox/weaponsofassdestruction"
 
@@ -389,6 +390,22 @@ def daily_poop_heatmap(user, separate_days=False):
         fig.suptitle(f"{user}'s Weekly Poop Heatmap", fontsize=16)
         plt.show()
 
+# Function to find the number of messages each user has sent to the chat
+def total_messages():
+    # Creating workspace
+    data = pd.read_csv("Save Files/All_Raw_Data.csv")
+    users = pd.read_csv("Save Files/Users.csv")["name"]
+
+    messages = {}
+    for name in users:
+        messages[name] = 0
+
+    # Counting messages
+    for i in range(len(data["content"])):
+        messages[data["sender_name"][i]] += 1
+    
+    return messages
+
 # Function to collect data of all likes received by a selected user
 def likes_received(selected_user, total=False, just_poops=False, display=False):
     # INPUTS
@@ -556,7 +573,80 @@ def biggest_content_sharer(display=False):
 
     return sharers
 
+# Function to calculate approximate lifetime poops of each user
+def lifetime_approximation(month=12):
+    # INPUTS
+    # month         : Integer of the month of latest data intake
+
+    # STATICS
+    avg_lifetime = 82.66 # years
+    days_alive = avg_lifetime*365
+
+    # Calculate total number of days spent
+    numdays = (date(2024, month, 28) - date(2024, 1, 1)).days
+
+    # Find highest poop of each user
+    users = pd.read_csv("Save Files/Users.csv")["name"]
+    lifetime_poops = {}
+    for user in users:
+        data = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
+        lifetime_poops[user] = int((data["content"].iloc[-1]/numdays)*days_alive)
+    
+    return lifetime_poops
+
+# Function to find the longest airtime of all users
+def airtime_per_user():
+    # OUTPUTS
+    # longest_airtime       : Dictionary of all users with the longest time they've been aired for
+    # total_airtime         : Dictionary of all users with the total time they've been aired for
+    # avg_airtime           : Dictionary of the average amount of airtime a user receives
+
+    # Setting up workspace
+    data = pd.read_csv("Save Files/All_Raw_Data.csv")
+    users = pd.read_csv("Save Files/Users.csv")["name"]
+    date_format = '%Y-%m-%d %H:%M:%S'
+
+    longest_airtime = {}
+    total_airtime = {}
+    for name in users:
+        longest_airtime[name] = 0
+        total_airtime[name] = 0
+
+    # Iterating through all messages to find the longest airtime
+    for i in range(len(data["timestamp"]) - 1):
+        date_str1 = data["timestamp"][i]
+        date_str2 = data["timestamp"][i + 1]
+
+        date_obj1 = datetime.strptime(date_str1, date_format)
+        date_obj2 = datetime.strptime(date_str2, date_format)
+        timediff = date_obj2 - date_obj1
+
+        name = data["sender_name"][i]
+        if longest_airtime[name] == 0 or timediff > longest_airtime[name]:
+            longest_airtime[name] = timediff
+        if total_airtime[name] == 0:
+            total_airtime[name] = timediff
+        else:
+            total_airtime[name] += timediff
+
+    # Average Airtime
+    messages = total_messages()
+    avg_airtime = {}
+    for name in users:
+        avg_airtime[name] = total_airtime[name] / messages[name]
+        
+    # Converting teimdeltas to strings
+    for name in users:
+        longest_airtime[name] = str(longest_airtime[name])
+        total_airtime[name] = str(total_airtime[name])
+        avg_airtime[name] = str(avg_airtime[name])
+    
+    return longest_airtime, total_airtime, avg_airtime
+
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    biggest_content_sharer(display=True)
+    print(total_messages())
+    airtime = airtime_per_user()
+    for i in airtime:
+        print(i)
