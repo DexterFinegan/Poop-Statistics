@@ -24,8 +24,8 @@ Version 1 & 2 Goals
 
 
 Version 2.1 Goals
-    - Have Save Files for each user's poops + a total poops dataframe
-    - Create Heatmap per user of time updated, and for the group each day of the week
+    - Have Save Files for each user's poops + a total poops dataframe                                       X
+    - Create Heatmap per user of time updated, and for the group each day of the week                       X
     - Biggest Like Giver
     - Most Versatile Reactor
     - Biggest Content Sharer

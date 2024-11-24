@@ -6,6 +6,7 @@
 import pandas as pd
 import os
 import json
+import ast
 import seaborn as sns
 from matplotlib import pyplot as plt
 
@@ -117,12 +118,36 @@ def separate_users():
             if raw_data["sender_name"][j] == user:
                 messages["content"].append(raw_data["content"][j])
                 messages["timestamp"].append(raw_data["timestamp"][j])
-                messages["reactions"].append(raw_data["reactions"][j])
                 messages["share"].append(raw_data["share"][j])
                 messages["audio_files"].append(raw_data["audio_files"][j])
                 messages["photos"].append(raw_data["photos"][j])
                 messages["videos"].append(raw_data["videos"][j])
                 messages["call_duration"].append(raw_data["call_duration"][j])
+
+                # Must do reactions more intensely
+                reactions = []
+                if not pd.isna(raw_data["reactions"][j]):
+                    if "x9d" in raw_data["reactions"][j]:
+                        reactions.append("Eoin")
+                    if "Stephen Allen" in raw_data["reactions"][j]:
+                        reactions.append("Stephen")
+                    if "Conor Mcmenamin" in raw_data["reactions"][j]:
+                        reactions.append("Conor")
+                    if "Dan Griffin" in raw_data["reactions"][j]:
+                        reactions.append("Dan")
+                    if "Ros Hanley" in raw_data["reactions"][j]:
+                        reactions.append("Ros")
+                    if "Jack McRann" in raw_data["reactions"][j]:
+                        reactions.append("Jack")
+                    if "lalala lucky to have me here" in raw_data["reactions"][j]:
+                        reactions.append("Soumia")
+                    if "Katie Long" in raw_data["reactions"][j]:
+                        reactions.append("Katie")
+                    if "Conan" in raw_data["reactions"][j]:
+                        reactions.append("Conan")
+                    if "Dex" in raw_data["reactions"][j]:
+                        reactions.append("Dex")
+                messages["reactions"].append(reactions)
         
         # Converting the dictionary into a pandas DataFrame
         MEGAFRAME = pd.DataFrame(data=messages)
@@ -163,12 +188,12 @@ def clean_users_poop_data(user):
                 elif char == " " and new_message != "":
                     messages["content"].append(int(new_message))
                     messages["timestamp"].append(MEGAFRAME["timestamp"][i])
-                    messages["reactions"].append("")    # Left for later 
+                    messages["reactions"].append(MEGAFRAME["reactions"][i])    # Left for later 
                     new_message = ""
             if new_message != "":
                 messages["content"].append(int(new_message))
                 messages["timestamp"].append(MEGAFRAME["timestamp"][i])
-                messages["reactions"].append("")    # Left for later 
+                messages["reactions"].append(MEGAFRAME["reactions"][i])    # Left for later 
                 new_message = ""
 
     MEGAFRAME = pd.DataFrame(data=messages)
@@ -182,7 +207,7 @@ def clean_users_poop_data(user):
             count += 1
             messages["content"].append(number)
             messages["timestamp"].append(MEGAFRAME["timestamp"][i])
-            messages["reactions"].append("")    # Left for later 
+            messages["reactions"].append(MEGAFRAME["reactions"][i])    # Left for later 
     
     MEGAFRAME = pd.DataFrame(data=messages)
 
@@ -244,64 +269,6 @@ def clean_users_poop_data(user):
     MEGAFRAME.to_csv(f"Save Files/Poops/{file_name}")
 
     print(f"{user}'s Poops have been Successfully Cleaned and Saved\n")
-
-# Function to correct loaded dataframe to have string timestamps to datetime.datetime objects
-def correct_datetime_objects(df):
-    # INPUT #
-    # df    :   pandas Dataframe with a "timestamp" column
-
-    # OUTPUT #
-    # df  :   pandas DataFrame with "timestamp" colum filled with corresponding pandas datetime objects
-
-    df['timestamp'] = pd.to_datetime(df['timestamp'], format='%Y-%m-%d %H:%M:%S')
-    df["timestamp"] = df["timestamp"].dt.round("1s")
-
-    return df
-
-# Function to calculate number of likes sent to a particular person from all other users as a dictionary
-def likes_roster(users, selected_user):
-    # INPUT #
-    # users :   pandas Dataframe of all users
-    # selected_user  :   string of the selected user
-
-    # OUTPUT #
-    # roster :  list of every other user's likes to you
-
-    # Loading users messages and creating other users dictionary
-    if selected_user != "all":
-        all_messages = pd.read_csv(f"Save Files/Messages/{selected_user}_Messages.csv")
-    else:
-        all_messages = pd.read_csv("Save Files/All_Raw_Data.csv")
-    roster = {}
-    for user in users["name"]:
-        roster[user] = 0
-
-    # Iterating through messages and counting likes
-    for reaction in all_messages["reactions"]:
-        if not pd.isna(reaction):
-            if "x93¸ð" in reaction:
-                roster["Eoin"] += 1
-            if "Stephen Allen" in reaction:
-                roster["Stephen"] += 1
-            if "Conor Mcmenamin" in reaction:
-                roster["Conor"] += 1
-            if "Dan Griffin" in reaction:
-                roster["Dan"] += 1
-            if "Ros Hanley" in reaction:
-                roster["Ros"] += 1
-            if "Jack McRann" in reaction:
-                roster["Jack"] += 1
-            if "Conan" in reaction:
-                roster["Conan"] += 1
-            if "lalala lucky to have me here" in reaction:
-                roster["Soumia"] += 1
-            if "Katie Long" in reaction:
-                roster["Katie"] += 1
-            if "Dex" in reaction:
-                roster["Dex"] += 1
-
-    # Note : Could not change reactions list/dictionary from dtring back to list/dictionary so had to find thru string, must fix
-    return roster
 
 # Function to display poops on a graph, used to verify if clean poops function works
 def display_poops(user):
@@ -422,8 +389,59 @@ def daily_poop_heatmap(user, separate_days=False):
         fig.suptitle(f"{user}'s Weekly Poop Heatmap", fontsize=16)
         plt.show()
 
+# Function to collect data of all likes received by a selected user
+def likes_received(selected_user, total=False, just_poops=False, display=False):
+    # INPUTS
+    # selected_user     : String of a refactored users name
+    # total             : Bool of whether to display the total accumulated likes received
+    # just_poops        : Bool of whether this search should be on just poop messages
+    # display           : Bool of whether display this information on a pie chart
+
+    # OUTPUTS
+    # data              : dictionary of every users name as a key a number of likes given to the selected user as the data
+
+    # Setting up the list and dictionary
+    users = pd.read_csv("Save Files/Users.csv")
+    users = users["name"]
+    data = {}
+    for user in users:
+        data[user] = 0
+
+    # Creating Dictionary
+    if just_poops:
+        raw_data = pd.read_csv(f"Save Files/Poops/{selected_user}_Poops.csv")
+    else:
+        raw_data = pd.read_csv(f"Save Files/Messages/{selected_user}_Messages.csv")
+    for i in raw_data["reactions"]:
+        i = ast.literal_eval(i)
+        for name in i:
+            data[name] += 1
+    
+    # Counting Total Likes
+    if total:
+        total_likes = 0
+        for name in data.keys():
+            total_likes += data[name]
+
+    # Creating Pie Chart
+    if display:
+        labels = []
+        slices = []
+        for name in data.keys():
+            label = name + " " + str(data[name])
+            labels.append(label)
+            slices.append(data[name])
+
+        plt.pie(slices, labels=labels)
+        plt.title(f"Likes Received by {selected_user}")
+        plt.show()
+    
+    if total:
+        return data, total_likes
+    else:
+        return data
 
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    daily_poop_heatmap("Ros", False)
+    likes_received("Ros", total = True, display=True)
