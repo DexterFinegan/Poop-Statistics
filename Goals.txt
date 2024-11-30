@@ -42,7 +42,7 @@ Version 2.1 Goals
     - Most supportive/supported person likes on messages containing updates exclusively
     - Rework algorithm for creating dataframe per user to optimize accuracy (especially gif related users)
     - Full shit length
-    - Who get's aired the most
+    - Who get's aired the most                                                                              X
     - Biggest duo conversationalists 
     - Next poop prediction algorithm 
     - Most used emojis
@@ -50,5 +50,5 @@ Version 2.1 Goals
     - Calculate peoples word count 
     - If the body has to shit out the same amount of poop, how big is each persons poop 
     - supervised and unsupervised ML models on the data 
-    - Did anyone like their own messages?
+    - Did anyone like their own messages?                                                                   X
     - Graph of people that liked each person more and more to show best friends

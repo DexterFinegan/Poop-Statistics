@@ -11,7 +11,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from datetime import datetime, date, timedelta
 
-DIRECTORY = "DATA/messages/inbox/weaponsofassdestruction"
+DIRECTORY = "DATA/messages/inbox/poopooheads"
 
 # Function to Extract raw data from the instagram json file to a dataframe
 # This will include replacing the names of users to more readable ones, and resetting index order
@@ -284,7 +284,7 @@ def display_poops(user):
 
     plt.xlabel("Entry")
     plt.ylabel("Poop Number")
-    plt.title("Poop Cleaning Consistency")
+    plt.title(f"{user}'s Poop Cleaning Consistency")
 
     plt.show()
 
@@ -643,10 +643,44 @@ def airtime_per_user():
     
     return longest_airtime, total_airtime, avg_airtime
 
+# Function to count the number of times a word was sent to chat
+def count_word(word, display=False, per_user=False):
+    # INPUT
+    # word      : String of the word to count
+    # display   : Bool whether to print each message containing the counted word
+    # per_user  : Bool whether to make a dictionary containing the number of times each user said the counted word
+
+    # OUTPUT
+    # count     : Integer of the count of how many times the word has found
+
+    messages = pd.read_csv("Save Files/All_Raw_Data.csv")
+    users = pd.read_csv("Save Files/Users.csv")["name"]
+    count = 0
+
+    if per_user:
+        counters = {}
+        for name in users:
+            counters[name] = 0
+
+    for i in range(len(messages)):
+        if not pd.isna(messages["content"][i]):
+            if word in messages["content"][i]:
+                count += messages["content"][i].count(word)
+
+                if display:
+                    string = str(messages["content"][i])
+                    print(f"{string} : {count}")
+
+                if per_user:
+                    counters[messages["sender_name"][i]] += messages["content"][i].count(word)
+
+    if per_user:
+        return count, counters
+
+    return count
+
+
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    print(total_messages())
-    airtime = airtime_per_user()
-    for i in airtime:
-        print(i)
+    print(count_word("bowel", per_user=True))
