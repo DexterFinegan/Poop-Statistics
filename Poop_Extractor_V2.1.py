@@ -9,7 +9,9 @@ import json
 import ast
 import seaborn as sns
 from matplotlib import pyplot as plt
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
+import pygame
+import numpy as np
 
 DIRECTORY = "DATA/messages/inbox/poopooheads"
 
@@ -271,6 +273,24 @@ def clean_users_poop_data(user):
 
     print(f"{user}'s Poops have been Successfully Cleaned and Saved\n")
 
+def combine_poops():
+
+    users = pd.read_csv("Save Files/Users.csv")
+    dataframes = []
+    for user in users["name"]:
+        df = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
+        df["user"] = user
+        df = df.drop(columns=["Unnamed: 0"])
+
+        print(df)
+        dataframes.append(df)
+
+    combined_df = pd.concat(dataframes)
+    combined_df = combined_df.sort_values(by='timestamp')
+    combined_df = combined_df.reset_index(drop=True)
+
+    combined_df.to_csv(f"Save Files/Poops/All_Poops.csv")
+
 # Function to display poops on a graph, used to verify if clean poops function works
 def display_poops(user):
     # INPUTS
@@ -299,6 +319,8 @@ def remake_files(directory):
     users = pd.read_csv("Save Files/Users.csv")
     for user in users["name"]:
         clean_users_poop_data(user)
+
+    combine_poops()
 
 # Function to create a heatmap of time of day for each poop of a user
 def daily_poop_heatmap(user, separate_days=False):
@@ -679,8 +701,96 @@ def count_word(word, display=False, per_user=False):
 
     return count
 
+def display_dynamic_barchart():
+    pygame.init()
+    w, h = 800, 600
+    wn = pygame.display.set_mode((w, h))
+    pygame.display.set_caption("2024 Poop Graph")
+    clock = pygame.time.Clock()
+
+    users = pd.read_csv("Save Files/Users.csv")
+    poop_dict = {}
+    for user in users:
+        poop_dict[user] = 0
+
+    date = date(2024, 1, 1)
+
+    while True:
+        print(date)
+        date = date + pd.Timedelta(days=1)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+
+        pygame.display.update()
+
+def display_all_poops():
+    df = pd.read_csv("Save Files/Poops/All_Poops.csv")
+    users = pd.read_csv("Save Files/Users.csv")
+    plt.rc("xtick", labelsize=7)
+    plt.rc("ytick", labelsize=15)
+
+    # Changing the timestamp to datetime format
+    df["timestamp"] = pd.to_datetime(df["timestamp"], format="mixed")
+
+    # Iterating through users to plot their graph
+    for user in users["name"]:
+        poop_days = []
+        poop = []
+        for index in range(len(df)):
+            if df["user"][index] == user:
+                poop_days.append(df["timestamp"][index])
+                poop.append(df["content"][index])
+        plt.plot(poop_days, poop, label=user)
+    
+    # Plotting and displaying graph + legend
+    plt.title("ALL OUR POOPS")
+    plt.legend()
+    plt.show()
+
+# Function to display poops from a user (or more), over a specific time period
+def display_specific_poops(users=[], time_period=()):
+    # INPUT 
+    # users         : Array of users refactored names as strings, if [] it will use all users
+    # time_period   : Tuple of two timestamps like (start_time, finish_time)
+
+    # Acquiring users as a numpy array
+    if not users:
+        users = np.array(pd.read_csv("Save Files/Users.csv")["name"])
+    else:
+        users = np.array(users)
+
+    # Fixing Ticking
+    plt.rc("xtick", labelsize=7)
+    plt.rc("ytick", labelsize=15)
+
+    for user in users:
+        # Acquiring correct time period
+        if time_period:
+            start_time, end_time = time_period[0], time_period[1]
+        else:
+            start_time, end_time = pd.to_datetime("2024-01-01 00:00:01"), pd.to_datetime("2024-12-31 23:59:59")
+
+        MEGAFRAME = pd.read_csv(f"Save Files/Poops/{user}_Poops.csv")
+        MEGAFRAME["timestamp"] = pd.to_datetime(MEGAFRAME["timestamp"])
+        filtered_MEGAFRAME = MEGAFRAME[(MEGAFRAME['timestamp'] >= start_time) & (MEGAFRAME['timestamp'] <= end_time)]
+        poops = filtered_MEGAFRAME['content']
+        poop_days = filtered_MEGAFRAME['timestamp']
+
+        plt.plot(poop_days, poops, label=user)
+
+    plt.xlabel("Day")
+    plt.ylabel("Poop Number")
+    plt.legend()
+    plt.title("Specific Poop Graph")
+
+    plt.show()
+
 
 # Call Space to work out kinks and represent data
 using = True
 if using:
-    print(count_word("bowel", per_user=True))
+    time = (pd.to_datetime("2024-01-01 01:00:00"), pd.to_datetime("2024-02-01 01:00:00"))
+    display_specific_poops(time_period=time)

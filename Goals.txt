@@ -52,3 +52,11 @@ Version 2.1 Goals
     - supervised and unsupervised ML models on the data 
     - Did anyone like their own messages?                                                                   X
     - Graph of people that liked each person more and more to show best friends
+
+Version 2.2 Goals
+    - Remake Algorithm to have indexes of poops and list of possible timestamps to clean                    X
+    - Use scipy to smooth out graphs
+    - Have a refactored names config file                                                                   X
+    - Implement message IDs                                                                                 X
+    - Comparison graph over the years
+    - Pygame barchart
