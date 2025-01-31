@@ -1,5 +1,18 @@
-,Message ID,timestamp,content,reactions,share,photos,videos,call_duration
-0,266,2025-01-02 16:20:44,2 ð,"[{'reaction': 'â\x9d¤', 'actor': 'Georgia-Rae'}, {'reaction': 'â\x9d¤', 'actor': 'Emma Smyth', 'timestamp': 1735836089}, {'reaction': 'ð\x9f\x91\x8f', 'actor': 'Dex', 'timestamp': 1735834859}]",,,,
-1,314,2025-01-03 10:06:19,3,,,,,
-2,510,2025-01-04 20:51:49,4,,,,,
-3,660,2025-01-06 20:48:08,5,,,,,
+,Message ID,timestamp,content,reactions,share,photos,audio_files,call_duration,videos
+0,266,2025-01-02 16:20:44,2 ð,"[{'reaction': 'â\x9d¤', 'actor': 'Georgia-Rae'}, {'reaction': 'â\x9d¤', 'actor': 'Emma Smyth', 'timestamp': 1735836089}, {'reaction': 'ð\x9f\x91\x8f', 'actor': 'Dex', 'timestamp': 1735834859}]",,,,,
+1,314,2025-01-03 10:06:19,3,,,,,,
+2,510,2025-01-04 20:51:49,4,,,,,,
+3,660,2025-01-06 20:48:08,5,,,,,,
+4,1295,2025-01-14 16:50:49,"15 
+Iâm still here I promise","[{'reaction': 'â\x9d¤', 'actor': 'Dan Griffin', 'timestamp': 1736874955}, {'reaction': 'â\x9d¤', 'actor': 'lalala lucky to have me here', 'timestamp': 1736891478}, {'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1736873594}]",,,,,
+5,1338,2025-01-15 19:37:15,16,,,,,,
+6,1406,2025-01-17 08:18:49,17 ð,,,,,,
+7,1455,2025-01-17 16:20:50,18,,,,,,
+8,1529,2025-01-19 10:29:42,19,,,,,,
+9,1622,2025-01-20 16:47:21,20,,,,,,
+10,1685,2025-01-21 13:40:11,21,,,,,,
+11,1740,2025-01-22 14:13:10,22,,,,,,
+12,1779,2025-01-23 11:09:08,23,,,,,,
+13,1871,2025-01-24 20:34:32,24,,,,,,
+14,1960,2025-01-26 11:11:23,25,,,,,,
+15,2025,2025-01-27 15:40:17,26,,,,,,

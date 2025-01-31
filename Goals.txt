@@ -55,8 +55,10 @@ Version 2.1 Goals
 
 Version 2.2 Goals
     - Remake Algorithm to have indexes of poops and list of possible timestamps to clean                    X
-    - Use scipy to smooth out graphs
+    - Use scipy to smooth out graphs                                                                        X
     - Have a refactored names config file                                                                   X
     - Implement message IDs                                                                                 X
-    - Comparison graph over the years
-    - Pygame barchart
+    - Comparison graph over the years                                                                       X
+    - Pygame barchart                                                                                       X
+    - Poops for the group per day chart
+    - Avg Poops per week chart

@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import pygame
 from datetime import datetime
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
 
 DIRECTORY = "DATA/messages/inbox/2025poopchat"
 
@@ -138,7 +140,7 @@ def extracting_number_messages(user, provided_df=None):
     
 def creating_possibility_poops(df):
     data = {}
-    length = 20
+    length = 60
     for index in range(len(df["content"])):
         poop = int(df["content"][index])
         if 0 < poop <= length:
@@ -185,16 +187,15 @@ def extract_and_clean_all_data(directory):
     df_list = []
     
     for user in users:
-        if user != "Jack":
-            numbers = extracting_number_messages(user)
-            possibilities = creating_possibility_poops(numbers)
-            poop_numbers = refine_possibilities(possibilities)
-            data = recollect_data(poop_numbers)
+        numbers = extracting_number_messages(user)
+        possibilities = creating_possibility_poops(numbers)
+        poop_numbers = refine_possibilities(possibilities)
+        data = recollect_data(poop_numbers)
 
-            # For the all poops file
-            df_list.append(data)
+        # For the all poops file
+        df_list.append(data)
 
-            print(f"Cleaned {user}'s poops\n")
+        print(f"Cleaned {user}'s poops\n")
     
     # Creating the All_Poops file
     df = pd.concat(df_list, ignore_index=True)
@@ -208,7 +209,7 @@ def test_cleaning(user):
     recollect_data(poop_numbers)
 
 # DISPLAYING ON GRAPHS
-def display_specific_poops(users=[], time_period=(), labels=True, legend=False, smooth=False):
+def display_specific_poops(users=[], time_period=(), labels=True, legend=False):
     # INPUT 
     # users         : Array of users refactored names as strings, if [] it will use all users
     # time_period   : Tuple of two timestamps like (start_time, finish_time)
@@ -224,29 +225,21 @@ def display_specific_poops(users=[], time_period=(), labels=True, legend=False, 
     plt.rc("ytick", labelsize=15)
 
     for user in users:
-        if user != "Jack":
-            # Acquiring correct time period
-            if time_period:
-                start_time, end_time = time_period[0], time_period[1]
-            else:
-                start_time, end_time = pd.to_datetime("2025-01-01 00:00:01"), pd.to_datetime("2025-12-31 23:59:59")
+        # Acquiring correct time period
+        if time_period:
+            start_time, end_time = time_period[0], time_period[1]
+        else:
+            start_time, end_time = pd.to_datetime("2025-01-01 00:00:01"), pd.to_datetime("2025-12-31 23:59:59")
 
-            MEGAFRAME = pd.read_csv(f"Save Files 2/Poops/{user}_Poops.csv")
-            MEGAFRAME["timestamp"] = pd.to_datetime(MEGAFRAME["timestamp"])
-            filtered_MEGAFRAME = MEGAFRAME[(MEGAFRAME['timestamp'] >= start_time) & (MEGAFRAME['timestamp'] <= end_time)]
-            poops = filtered_MEGAFRAME['Poop']
-            poop_days = filtered_MEGAFRAME['timestamp']
+        MEGAFRAME = pd.read_csv(f"Save Files 2/Poops/{user}_Poops.csv")
+        MEGAFRAME["timestamp"] = pd.to_datetime(MEGAFRAME["timestamp"])
+        filtered_MEGAFRAME = MEGAFRAME[(MEGAFRAME['timestamp'] >= start_time) & (MEGAFRAME['timestamp'] <= end_time)]
+        poops = filtered_MEGAFRAME['Poop']
+        poop_days = filtered_MEGAFRAME['timestamp']
+        plt.plot(poop_days, poops, label=user)
 
-            if smooth:
-                f = interp1d(poop_days, poops, kind="cubic")
-                x_new = np.linspace(min(poop_days), max(poop_days), 500)
-                y_new = f(x_new)
-                plt.plot(x_new, y_new, label=user)
-            else:
-                plt.plot(poop_days, poops, label=user)
-
-            if labels:
-                plt.text(list(poop_days)[-1], list(poops)[-1], user, fontsize=6, fontweight='bold', backgroundcolor='white', verticalalignment='top', horizontalalignment='right')
+        if labels:
+            plt.text(list(poop_days)[-1], list(poops)[-1], user, fontsize=5, in_layout=False, fontweight='bold', backgroundcolor='white', verticalalignment='top', horizontalalignment='right')
 
     plt.xlabel("Day")
     plt.ylabel("Poop Number")
@@ -265,8 +258,7 @@ def like_sender():
     # Setting up the likes dataframe
     likes = {}
     for user in users:
-        if user != "Jack":
-            likes[user] = 0
+        likes[user] = 0
 
     for i in range(len(df)):
         reactors = decode_reactions(df["reactions"][i])
@@ -339,21 +331,47 @@ def dynamic_bar_chart():
     df = pd.read_csv("Save Files 2/Poops/All Poops.csv")
 
     # Creating user bar charts
+    colours = [
+    (255, 0, 0),      # Bright Red
+    (0, 255, 0),      # Bright Green
+    (0, 0, 255),      # Bright Blue
+    (255, 255, 0),    # Yellow
+    (255, 165, 0),    # Orange
+    (255, 20, 147),   # Deep Pink
+    (0, 255, 255),    # Cyan
+    (255, 0, 255),    # Magenta
+    (75, 0, 130),     # Indigo
+    (0, 255, 127),    # Spring Green
+    (255, 105, 180),  # Hot Pink
+    (127, 255, 0),    # Chartreuse
+    (255, 69, 0),     # Red-Orange
+    (0, 191, 255),    # Deep Sky Blue
+    (148, 0, 211),    # Dark Violet
+    (0, 128, 255),    # Vivid Blue
+    (255, 0, 127),    # Bright Pink
+    (46, 139, 87),    # Sea Green
+    (255, 223, 0),    # Golden Yellow
+    (186, 85, 211),   # Medium Orchid
+    (255, 140, 0),    # Dark Orange
+    (144, 238, 144),  # Light Green
+    (30, 144, 255),   # Dodger Blue
+    (220, 20, 60),    # Crimson
+    (238, 130, 238)   # Violet
+    ]
     bars = []
     place = 0
     for user in users:
-        if user != "Jack":
-            bars.append(Bar(user, place))
-            place += 1
+        colour = colours[place]
+        bars.append(Bar(user, place, colour))
+        place += 1
 
     poop_dict = {}
     for user in users:
-        if user != "Jack":
-            poop_dict[user] = 0
+        poop_dict[user] = 0
 
     index = 0
     while True:
-        clock.tick(16)
+        clock.tick(15)
         wn.fill((0, 0, 0))
 
         for event in pygame.event.get():
@@ -361,11 +379,12 @@ def dynamic_bar_chart():
                 pygame.quit()
         
         # Update Poop Dict
-        poop_dict[df["user"][index]] = int(df["Poop"][index])
-        index += 1
-        sorted_data = dict(sorted(poop_dict.items(), key=lambda item: item[1], reverse=True))
-        for bar in bars:
-            bar.update(sorted_data)
+        if index < len(df["Poop"]) - 1:
+            poop_dict[df["user"][index]] = int(df["Poop"][index])
+            index += 1
+            sorted_data = dict(sorted(poop_dict.items(), key=lambda item: item[1], reverse=True))
+            for bar in bars:
+                bar.update(sorted_data)
 
         # Display Text
         for bar in bars:
@@ -381,9 +400,10 @@ def dynamic_bar_chart():
         pygame.display.update()
 
 class Bar(object):
-    def __init__(self, user, place):
+    def __init__(self, user, place, colour):
         self.user = user
         self.place = place
+        self.colour = colour
         self.length = 0
         self.poop = 0
         self.y = self.place*27
@@ -391,13 +411,12 @@ class Bar(object):
 
     def draw(self, wn):
         # User Name Text
-        sc_w, sc_h = 800, 600
         font = pygame.font.SysFont("Ariel", 23)
         text = font.render(self.user, 1, (255, 255, 255))
         wn.blit(text, (30, 20 + self.y))
 
         # Bar
-        pygame.draw.rect(wn, (255, 255, 255), (150, 20 + self.y, self.x, 20))
+        pygame.draw.rect(wn, self.colour, (150, 20 + self.y, self.x, 20))
 
         # Write the poop count
         text = font.render(str(int(self.poop)), 1, (255, 255, 255))
@@ -485,8 +504,61 @@ def compare_year_poops(user, directories, time_period=None):
 
     plt.show()
 
-#directories = ["DATA/messages/inbox/2025poopchat", "DATA/messages/inbox/poopooheads"]
-#dates = pd.to_datetime("1969-01-01 00:00:01"), pd.to_datetime("1969-01-31 23:59:59")
-#compare_year_poops("Eoin", directories, time_period=dates)
+def smooth_display_specific_poops(users=[], time_period=(), labels=True, scatter=False):
+    # INPUT 
+    # users         : Array of users refactored names as strings, if [] it will use all users
+    # time_period   : Tuple of two timestamps like (start_time, finish_time)
 
+    # Acquiring users as a numpy array
+    if not users:
+        users = np.array(pd.read_csv("Save Files 2/Users.csv")["user"])
+    else:
+        users = np.array(users)
+
+    # Fixing Ticking
+    plt.rc("xtick", labelsize=7)
+    plt.rc("ytick", labelsize=15)
+
+    for user in users:
+        # Acquiring correct time period
+        if time_period:
+            start_time, end_time = time_period[0], time_period[1]
+        else:
+            start_time, end_time = pd.to_datetime("2025-01-01 00:00:01"), pd.to_datetime("2025-12-31 23:59:59")
+
+        MEGAFRAME = pd.read_csv(f"Save Files 2/Poops/{user}_Poops.csv")
+        MEGAFRAME["timestamp"] = pd.to_datetime(MEGAFRAME["timestamp"])
+        filtered_MEGAFRAME = MEGAFRAME[(MEGAFRAME['timestamp'] >= start_time) & (MEGAFRAME['timestamp'] <= end_time)]
+
+        start = pd.to_datetime("2025-01-01 00:00:01")
+        filtered_MEGAFRAME['hours_since_year_start'] = (filtered_MEGAFRAME['timestamp'] - start).dt.total_seconds() / 3600
+        x = list(filtered_MEGAFRAME['hours_since_year_start'])
+        y = list(filtered_MEGAFRAME['Poop'])
+        x = np.array(x).reshape(-1, 1)
+        y = np.array(y).reshape(-1, 1)
+
+        x_grid = np.arange(min(x), max(x), 0.1)
+        x_grid = x_grid.reshape((len(x_grid), 1))
+
+        poly_reg = PolynomialFeatures(degree=5)
+        poop_poly = poly_reg.fit_transform(x)
+        lin_reg = LinearRegression()
+        lin_reg.fit(poop_poly, y)
+
+        if scatter:
+            plt.scatter(x, y, label=user)
+        plt.plot(x_grid, lin_reg.predict(poly_reg.fit_transform(x_grid)))
+
+        if labels:
+            plt.text(x[-1], y[-1], user, fontsize=6, fontweight='bold', backgroundcolor='white', verticalalignment='top', horizontalalignment='right')
+
+    plt.xlabel("Day")
+    plt.ylabel("Poop Number")
+
+    plt.title("Specific Poop Graph")
+
+    plt.show()
+
+#extract_and_clean_all_data(DIRECTORY)
+#display_specific_poops(labels=True, legend=True)
 dynamic_bar_chart()

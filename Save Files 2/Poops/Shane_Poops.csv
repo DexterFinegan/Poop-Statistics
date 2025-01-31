@@ -1,16 +1,41 @@
-,Poop,IDs,user,timestamp,content,reactions
-0,1,17,Shane,2025-01-01 12:25:22,1,"[{'reaction': 'â\x9d¤', 'actor': 'Ruby Long', 'timestamp': 1735734331}, {'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1735734336}, {'reaction': 'â\x9d¤', 'actor': 'Ros Hanley', 'timestamp': 1735734328}]"
-1,2,106,Shane,2025-01-01 16:43:47,2,
-2,3,176,Shane,2025-01-02 12:06:36,3,
-3,4,315,Shane,2025-01-03 11:41:37,4,
-4,5,478,Shane,2025-01-04 14:33:22,4 & 5 forgot to update yesterday!!!!,"[{'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1736001292}]"
-5,6,533,Shane,2025-01-05 16:32:39,6 and 7!!,
-6,7,533,Shane,2025-01-05 16:32:39,6 and 7!!,
-7,8,569,Shane,2025-01-06 11:00:14,8 ðð,"[{'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1736161223}]"
-8,9,643,Shane,2025-01-06 15:13:07,9!!!,
-9,10,667,Shane,2025-01-07 11:03:42,10 ðºð¸ðºð¸ðºð¸,
-10,11,807,Shane,2025-01-08 18:47:01,Shit I never updated earlier think Iâm on 11 now,
-11,12,847,Shane,2025-01-09 12:09:48,12 ð¤ ,
-12,13,920,Shane,2025-01-10 11:08:49,13 we are so fucking back,"[{'reaction': 'â\x9d¤', 'actor': 'Georgia-Rae'}, {'reaction': 'ð\x9f\x98\x8d', 'actor': 'Ruby Long', 'timestamp': 1736507348}, {'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1736507336}]"
-13,14,1071,Shane,2025-01-11 10:40:06,14 has arrived to say hello,"[{'reaction': 'â\x9d¤', 'actor': 'lalala lucky to have me here', 'timestamp': 1736592130}]"
-14,15,1125,Shane,2025-01-12 11:02:55,15 ð¤¯ð¤¯,
+,Poop,IDs,user,timestamp,content,reactions,audio_files
+0,1,17,Shane,2025-01-01 12:25:22,1,"[{'reaction': 'â\x9d¤', 'actor': 'Ruby Long', 'timestamp': 1735734331}, {'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1735734336}, {'reaction': 'â\x9d¤', 'actor': 'Ros Hanley', 'timestamp': 1735734328}]",
+1,2,106,Shane,2025-01-01 16:43:47,2,,
+2,3,176,Shane,2025-01-02 12:06:36,3,,
+3,4,315,Shane,2025-01-03 11:41:37,4,,
+4,5,478,Shane,2025-01-04 14:33:22,4 & 5 forgot to update yesterday!!!!,"[{'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1736001292}]",
+5,6,533,Shane,2025-01-05 16:32:39,6 and 7!!,,
+6,7,533,Shane,2025-01-05 16:32:39,6 and 7!!,,
+7,8,569,Shane,2025-01-06 11:00:14,8 ðð,"[{'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1736161223}]",
+8,9,643,Shane,2025-01-06 15:13:07,9!!!,,
+9,10,667,Shane,2025-01-07 11:03:42,10 ðºð¸ðºð¸ðºð¸,,
+10,11,807,Shane,2025-01-08 18:47:01,Shit I never updated earlier think Iâm on 11 now,,
+11,12,847,Shane,2025-01-09 12:09:48,12 ð¤ ,,
+12,13,920,Shane,2025-01-10 11:08:49,13 we are so fucking back,"[{'reaction': 'â\x9d¤', 'actor': 'Georgia-Rae'}, {'reaction': 'ð\x9f\x98\x8d', 'actor': 'Ruby Long', 'timestamp': 1736507348}, {'reaction': 'â\x9d¤', 'actor': 'Dex', 'timestamp': 1736507336}]",
+13,14,1071,Shane,2025-01-11 10:40:06,14 has arrived to say hello,"[{'reaction': 'â\x9d¤', 'actor': 'lalala lucky to have me here', 'timestamp': 1736592130}]",
+14,15,1125,Shane,2025-01-12 11:02:55,15 ð¤¯ð¤¯,,
+15,16,1184,Shane,2025-01-12 18:33:39,"16!! Boss makes and dollar, I make a dime and all that craic",,
+16,17,1244,Shane,2025-01-13 16:23:09,17 and 18 I forgot to update :(,,
+17,18,1244,Shane,2025-01-13 16:23:09,17 and 18 I forgot to update :(,,
+18,19,1329,Shane,2025-01-15 11:43:54,19 and 20 completed ð,"[{'reaction': 'ð\x9f\x98¡', 'actor': 'Georgia-Rae'}]",
+19,20,1329,Shane,2025-01-15 11:43:54,19 and 20 completed ð,"[{'reaction': 'ð\x9f\x98¡', 'actor': 'Georgia-Rae'}]",
+20,21,1353,Shane,2025-01-16 11:07:16,21 :),,
+21,22,1418,Shane,2025-01-17 11:44:54,22 goodnight and godbless,,
+22,23,1479,Shane,2025-01-18 11:12:53,23 ð,,
+23,24,1589,Shane,2025-01-20 13:22:36,"Oh shoot sorry I never updated!!! 24, 25, 26 all completed","[{'reaction': 'ð\x9f\x98¢', 'actor': 'Dex', 'timestamp': 1737379423}]",
+24,25,1589,Shane,2025-01-20 13:22:36,"Oh shoot sorry I never updated!!! 24, 25, 26 all completed","[{'reaction': 'ð\x9f\x98¢', 'actor': 'Dex', 'timestamp': 1737379423}]",
+25,26,1589,Shane,2025-01-20 13:22:36,"Oh shoot sorry I never updated!!! 24, 25, 26 all completed","[{'reaction': 'ð\x9f\x98¢', 'actor': 'Dex', 'timestamp': 1737379423}]",
+26,27,1670,Shane,2025-01-21 10:52:44,27 ð,,
+27,28,1730,Shane,2025-01-22 10:40:20,28 over n out,,
+28,29,1773,Shane,2025-01-23 10:36:40,29 ðº,,
+29,30,1843,Shane,2025-01-24 10:18:07,30 yippee!!!!,,
+30,31,1883,Shane,2025-01-25 10:22:07,31 and also a stinker,"[{'reaction': 'â\x9d¤', 'actor': 'Dex'}]",
+31,32,2057,Shane,2025-01-28 11:22:11,"32 Wexford poop â
+33 bolands poop â
+34 home poop â","[{'reaction': 'â\x9d¤', 'actor': 'Dex'}]",
+32,33,2057,Shane,2025-01-28 11:22:11,"32 Wexford poop â
+33 bolands poop â
+34 home poop â","[{'reaction': 'â\x9d¤', 'actor': 'Dex'}]",
+33,34,2057,Shane,2025-01-28 11:22:11,"32 Wexford poop â
+33 bolands poop â
+34 home poop â","[{'reaction': 'â\x9d¤', 'actor': 'Dex'}]",
