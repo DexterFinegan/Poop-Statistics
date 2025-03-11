@@ -8,6 +8,7 @@ import json
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import pygame
+import seaborn as sns
 from datetime import datetime
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
@@ -140,7 +141,7 @@ def extracting_number_messages(user, provided_df=None):
     
 def creating_possibility_poops(df):
     data = {}
-    length = 60
+    length = 110
     for index in range(len(df["content"])):
         poop = int(df["content"][index])
         if 0 < poop <= length:
@@ -159,13 +160,14 @@ def refine_possibilities(df):
     for index in range(len(df["Possible Message IDs"])):
         if data["IDs"]:
             for entry in df["Possible Message IDs"][index]:
-                if int(entry) >= data["IDs"][-1]:
+                if int(entry) >= data["IDs"][-1] and int(entry) - data["IDs"][-1] < 1000:
                     data["IDs"].append(int(entry))
                     data["Poop"].append(int(df["Poop"][index]))
                     break
         else:
-            data["IDs"].append(int(df["Possible Message IDs"][index][0]))
-            data["Poop"].append(int(df["Poop"][index]))
+            if int(df["Possible Message IDs"][index][0]) < 700:
+                data["IDs"].append(int(df["Possible Message IDs"][index][0]))
+                data["Poop"].append(int(df["Poop"][index]))
     new_df = pd.DataFrame(data)
     return new_df
 
@@ -251,8 +253,11 @@ def display_specific_poops(users=[], time_period=(), labels=True, legend=False):
 
     plt.show()
 
-def like_sender():
-    df = pd.read_csv("Save Files 2/All_Raw_Data.csv")
+def like_sender(pie=False, only_poops=False):
+    if only_poops:
+        df = pd.read_csv("Save Files 2/Poops/All Poops.csv")
+    else:
+        df = pd.read_csv("Save Files 2/All_Raw_Data.csv")
     users = list(pd.read_csv("Save Files 2/Users.csv")["user"])
 
     # Setting up the likes dataframe
@@ -264,6 +269,20 @@ def like_sender():
         reactors = decode_reactions(df["reactions"][i])
         for user in reactors:
             likes[user] += 1
+
+    if pie:
+        labels = []
+        slices = []
+        total = 0
+        for name in likes.keys():
+            labels.append(f"{name} {likes[name]}")
+            slices.append(int(likes[name]))
+            total += likes[name]
+
+        plt.rcParams.update({'font.size': 7})
+        plt.pie(slices, labels = labels)
+        plt.title(f"Total Likes Sent : {total}")
+        plt.show()
 
     return likes
 
@@ -321,7 +340,7 @@ def order_dictionary(dic):
 
 def dynamic_bar_chart():
     pygame.init()
-    sc_w, sc_h = 800, 600
+    sc_w, sc_h = 1200, 700
     wn = pygame.display.set_mode((sc_w, sc_h))
     pygame.display.set_caption("2025 POOP WAR")
     clock = pygame.time.Clock()
@@ -369,34 +388,46 @@ def dynamic_bar_chart():
     for user in users:
         poop_dict[user] = 0
 
+    bg = pygame.image.load("pictures/bar_chart_bg.jpg")
+    image_size = (sc_w, sc_h)
+    bg = pygame.transform.scale(bg, image_size)
+
+    wait_time = 30
+
     index = 0
     while True:
-        clock.tick(15)
+        clock.tick(12)
         wn.fill((0, 0, 0))
+        wn.blit(bg, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+
+        title_font = pygame.font.SysFont("Ariel", 60)
+        title_text = title_font.render("POOP WAR 2025", 1, (0, 0, 0))
+        wn.blit(title_text, (sc_w/2 - title_text.get_width()/2, 10))
         
         # Update Poop Dict
-        if index < len(df["Poop"]) - 1:
-            poop_dict[df["user"][index]] = int(df["Poop"][index])
-            index += 1
-            sorted_data = dict(sorted(poop_dict.items(), key=lambda item: item[1], reverse=True))
+        if wait_time < 0 or wait_time == 30:
+            if index < len(df["Poop"]) - 1:
+                poop_dict[df["user"][index]] = int(df["Poop"][index])
+                index += 1
+                sorted_data = dict(sorted(poop_dict.items(), key=lambda item: item[1], reverse=True))
+                for bar in bars:
+                    bar.update(sorted_data)
+
+            # Display Text
             for bar in bars:
-                bar.update(sorted_data)
+                bar.draw(wn)
 
-        # Display Text
-        for bar in bars:
-            bar.draw(wn)
+            # Display Date
+            date = datetime.strptime(df["timestamp"][index], "%Y-%m-%d %H:%M:%S")
+            day, month = date.day, date.strftime("%B")
+            date_text = date_font.render(f"{day} of {month}", 1, (0, 0, 0))
+            wn.blit(date_text, (sc_w - date_text.get_width() - 20, sc_h - date_text.get_height() - 10))
 
-        # Display Date
-        date = datetime.strptime(df["timestamp"][index], "%Y-%m-%d %H:%M:%S")
-        day, month = date.day, date.strftime("%B")
-        date_text = date_font.render(f"{day} of {month}", 1, (255, 255, 255))
-        wn.blit(date_text, (sc_w - date_text.get_width() - 20, sc_h - date_text.get_height() - 10))
-
-
+        wait_time -= 1
         pygame.display.update()
 
 class Bar(object):
@@ -411,16 +442,16 @@ class Bar(object):
 
     def draw(self, wn):
         # User Name Text
-        font = pygame.font.SysFont("Ariel", 23)
-        text = font.render(self.user, 1, (255, 255, 255))
-        wn.blit(text, (30, 20 + self.y))
+        font = pygame.font.SysFont("Ariel", 26)
+        text = font.render(self.user, 1, (0, 0, 0))
+        wn.blit(text, (30, 85 + self.y))
 
         # Bar
-        pygame.draw.rect(wn, self.colour, (150, 20 + self.y, self.x, 20))
+        pygame.draw.rect(wn, self.colour, (150, 85 + self.y, self.x, 20))
 
         # Write the poop count
-        text = font.render(str(int(self.poop)), 1, (255, 255, 255))
-        wn.blit(text, (160 + self.x, 20 + self.y))
+        text = font.render(str(int(self.poop)), 1, (0, 0, 0))
+        wn.blit(text, (160 + self.x, 85 + self.y))
 
     def update(self, data):
         # Finding place
@@ -431,7 +462,7 @@ class Bar(object):
         # Finding bar Length
         highest = list(data.items())[0]
         user, poop = highest
-        self.length = 600*(self.poop/poop)
+        self.length = 1000*(self.poop/poop)
 
         # Moving the bar
         dy = self.place*27 - self.y
@@ -559,6 +590,190 @@ def smooth_display_specific_poops(users=[], time_period=(), labels=True, scatter
 
     plt.show()
 
+def leaderboard():
+    # Setting up screen
+    pygame.init()
+    sc_w, sc_h = 800, 600
+    wn = pygame.display.set_mode((sc_w, sc_h))
+    pygame.display.set_caption("2025 POOP LEADERBOARD")
+    clock = pygame.time.Clock()
+
+    # Collecting Leaderboard
+    users = np.array(pd.read_csv("Save Files 2/Users.csv")["user"])
+    leaders = {}
+    total = 0
+    for name in users:
+        poops = list(pd.read_csv(f"Save Files 2/Poops/{name}_Poops.csv")["Poop"])[-1]
+        leaders[name] = poops
+        total += poops
+    print(f"Average Poops = {total/21}")
+
+    ordered_list = sorted(list(leaders.values()), reverse=True)
+    leader = []
+    
+    for value in ordered_list:
+        keys = [key for key, val in leaders.items() if val == value and [key, val] not in leader]
+        leader.append([keys[0], value])
+   
+    bg = pygame.image.load("pictures/Leaderboard_bg.jpg")
+    image_size = (sc_w, sc_h)
+    bg = pygame.transform.scale(bg, image_size)
+    running = True
+    while running:
+        pygame.display.update()
+        wn.fill((255, 255, 255))
+        wn.blit(bg, (0,0))
+        clock.tick(24)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        # Title
+        title_font = pygame.font.SysFont("Ariel", 60)
+        title = title_font.render("January Leaderboard!!!", 1, (0, 0, 0))
+        wn.blit(title, (sc_w/2 - title.get_width()/2, 25))
+
+        # Users
+        place = 1
+        for index in range(len(leader)):
+            user_font = pygame.font.SysFont("Ariel", 30)
+            position = user_font.render(f"{place} - {leader[index][0]} with {leader[index][1]}", 1, (0, 0, 0))
+            wn.blit(position, (110 + (index//11)*400, 80 + (index%11)*45))
+            place += 1
+
+        # Total Poops
+        total_font = pygame.font.SysFont("Ariel", 45)
+        total_text = total_font.render(f"Total Poops : {total}", 1, (0, 0, 0))
+        wn.blit(total_text, (sc_w/2 - total_text.get_width()/2, sc_h - 10 - total_text.get_height()))
+
+def poops_per_day():
+    df = pd.read_csv("Save Files 2/Poops/All Poops.csv")
+
+    timestamps = [1]
+    poops = []
+    current_timestamp = 1
+    poop_count = 0
+
+    for i in range(len(df["Poop"])):
+        date = datetime.strptime(df["timestamp"][i], "%Y-%m-%d %H:%M:%S").day
+        if current_timestamp != date:
+            timestamps.append(date)
+            current_timestamp = datetime.strptime(df["timestamp"][i], "%Y-%m-%d %H:%M:%S").day
+            poops.append(poop_count)
+            poop_count = 0
+        else:
+            poop_count += 1
+    poops.append(poop_count)
+
+    plt.bar(timestamps, poops, color='skyblue')
+    plt.title("Group Poops Each Day")
+    plt.xlabel("Day of the Month")
+    plt.ylabel("Num Poops")
+    plt.show()
+
+# Function to create a heatmap of time of day for each poop of a user
+def daily_poop_heatmap(user, separate_days=False):
+    # INPUT
+    # user          : String of refactored user name to be plotted
+    # separate_days : Bool saying whether it should be accumulated to one day or a week
+
+    # OUTPUT
+    # seaborns heatmap of the time of day the user updates
+
+    # Loading and configuring data
+    df = pd.read_csv(f"Save Files 2/Poops/{user}_Poops.csv")
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+
+    if not separate_days:
+        df["hour"] = df["timestamp"].dt.hour
+
+        # Count the number of entries for each hour
+        hour_counts = df["hour"].value_counts().sort_index()
+
+        # Convert to a dataframe and reshape for heatmap
+        heatmap_data = hour_counts.reindex(range(24), fill_value=0).to_frame()
+        heatmap_data.columns = ["Counts"]
+
+        # Create the heatmap
+        plt.figure(figsize=(4, 8))  # Adjust figure size for vertical orientation
+        sns.heatmap(
+            heatmap_data,
+            annot=True,
+            fmt="d",
+            cmap="Blues",
+            cbar=True,
+            xticklabels=False,  
+            yticklabels=range(24), 
+            annot_kws={"size": 7}
+        )
+        plt.ylabel("Hour of Day")
+        plt.title(f"{user}'s Daily Poop Heatmap")
+        plt.show()
+    else:
+        df["hour"] = df["timestamp"].dt.hour
+        df["day_of_week"] = df["timestamp"].dt.day_name()
+        
+        hours = range(24)  
+        days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+        # Create a complete index of days and hours
+        heatmap_data = (
+            df.groupby(["day_of_week", "hour"])
+            .size()
+            .unstack(fill_value=0)  
+            .reindex(index=days, columns=hours, fill_value=0)  
+        )
+        
+        vmin, vmax = heatmap_data.values.min(), heatmap_data.values.max()
+
+        # Create the heatmaps
+        fig, axes = plt.subplots(1, 7, figsize=(20, 8), sharey=True)
+        cmap = sns.color_palette("Blues", as_cmap=True)
+
+        for ax, (day, data) in zip(axes, heatmap_data.iterrows()):
+            sns.heatmap(
+                data.to_frame(), 
+                annot=True,
+                fmt="g",
+                cmap="Blues",
+                cbar=False,  
+                vmin = vmin,
+                vmax = vmax,
+                ax=ax,
+                xticklabels=True, 
+                yticklabels=range(24),
+                annot_kws={"size": 6}
+            )
+            ax.set_title(day)
+            if ax == axes[0]:
+                ax.set_ylabel("Hour of Day")
+            else:
+                ax.set_ylabel("")
+
+        # Add a single global color bar
+        cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])  
+        norm = plt.Normalize(vmin=vmin, vmax=vmax) 
+        sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+        sm.set_array([])  
+        fig.colorbar(sm, cax=cbar_ax, label="Entry Counts")
+
+        plt.subplots_adjust(wspace=0.4)
+        fig.suptitle(f"{user}'s Weekly Poop Heatmap", fontsize=16)
+        plt.show()
+
+
+
+
+
 #extract_and_clean_all_data(DIRECTORY)
+#leaderboard()
 #display_specific_poops(labels=True, legend=True)
-dynamic_bar_chart()
+#dynamic_bar_chart()
+#like_sender(pie=True, only_poops=True)
+#poops_per_day()
+compare_year_poops("Eoin", [DIRECTORY, "DATA/messages/inbox/poopooheads"], time_period=[pd.to_datetime("1969-01-01 00:00:01"), pd.to_datetime(f"1969-02-28 00:00:01")])
+
+#users = get_users(DIRECTORY)
+#for user in users:
+#    daily_poop_heatmap(user=user)

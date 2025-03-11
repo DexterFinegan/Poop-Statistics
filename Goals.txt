@@ -62,3 +62,14 @@ Version 2.2 Goals
     - Pygame barchart                                                                                       X
     - Poops for the group per day chart
     - Avg Poops per week chart
+
+January Update must include
+    - Full Leaderboard
+    - Total Weight and comparisons
+    - Highest and farthest poops
+    - Full Data Line chart
+    - Notable peoples poop moments (Sean's IBS etc)
+    - Dynamic Bar chart
+    - Total likes spread
+    - Comparison Poops
+    - Poops per day for the group
