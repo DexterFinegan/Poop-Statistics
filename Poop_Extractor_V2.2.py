@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import pygame
 import seaborn as sns
-from datetime import datetime
+from datetime import datetime, timedelta
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 
@@ -141,7 +141,7 @@ def extracting_number_messages(user, provided_df=None):
     
 def creating_possibility_poops(df):
     data = {}
-    length = 110
+    length = 300
     for index in range(len(df["content"])):
         poop = int(df["content"][index])
         if 0 < poop <= length:
@@ -210,6 +210,20 @@ def test_cleaning(user):
     poop_numbers = refine_possibilities(possibilities)
     recollect_data(poop_numbers)
 
+def find_double_poops(user):
+    # Smoothing out data
+    df = pd.read_csv(f"Save Files 2/Poops/{user}_Poops.csv")
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    for i in range(1, len(df) - 1):
+        prev = df["timestamp"].iloc[i-1]
+        curr = df["timestamp"].iloc[i]
+        next = df["timestamp"].iloc[i+1]
+        delta = next - curr
+        if delta < pd.Timedelta(minutes=5):
+            df.loc[i, "timestamp"] = prev + (curr - prev)/2
+    
+    return df
+
 # DISPLAYING ON GRAPHS
 def display_specific_poops(users=[], time_period=(), labels=True, legend=False):
     # INPUT 
@@ -268,7 +282,8 @@ def like_sender(pie=False, only_poops=False):
     for i in range(len(df)):
         reactors = decode_reactions(df["reactions"][i])
         for user in reactors:
-            likes[user] += 1
+            if user != "Noelle":
+                likes[user] += 1
 
     if pie:
         labels = []
@@ -524,7 +539,7 @@ def compare_year_poops(user, directories, time_period=None):
         poops = dfs[key]['Poop']
         poop_days = dfs[key]['timestamp']
         poop_days = pd.to_datetime(poop_days)
-        poop_days = poop_days.apply(lambda x: x.replace(year=1969))
+        poop_days = poop_days.apply(lambda x: x.replace(year=2024))
         plt.plot(poop_days, poops, label=key)
     
     plt.xlabel("Day")
@@ -762,18 +777,76 @@ def daily_poop_heatmap(user, separate_days=False):
         fig.suptitle(f"{user}'s Weekly Poop Heatmap", fontsize=16)
         plt.show()
 
+def shortest_time_between_poops(user):
+    # Finding the shortest time between poops
+    df = find_double_poops(user)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    shortest = 90000000
+    for i in range(1, len(df) - 1):
+        curr = df["timestamp"].iloc[i]
+        next = df["timestamp"].iloc[i+1]
+        delta = (next - curr).total_seconds()
+        if delta < shortest:
+            shortest = delta
+    
+    # Converting the shortest time to hours minutes
+    days = np.floor(((shortest/60)/60)/24)
+    hours = np.floor(((shortest - days*24*60*60)/60)/60)
+    minutes = np.floor((shortest - days*24*60*60 - hours*60*60)/60)
+    seconds = shortest - days*24*60*60 - hours*60*60 - minutes*60
+    print(f"{user}'s Shortest Time Between Poops is {days} Days, {hours} Hours, {minutes} Minutes and {seconds} Seconds")
 
+def longest_time_between_poops(user):
+    # Finding the longest time between poops
+    df = find_double_poops(user)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    longest = 0
+    for i in range(1, len(df) - 1):
+        curr = df["timestamp"].iloc[i]
+        next = df["timestamp"].iloc[i+1]
+        delta = (next - curr).total_seconds()
+        if delta > longest:
+            longest = delta
+    
+    # Converting the longest time to hours minutes
+    days = np.floor(((longest/60)/60)/24)
+    hours = np.floor(((longest - days*24*60*60)/60)/60)
+    minutes = np.floor((longest - days*24*60*60 - hours*60*60)/60)
+    seconds = longest - days*24*60*60 - hours*60*60 - minutes*60
+    print(f"{user}'s Longest Time Between Poops is {days} Days, {hours} Hours, {minutes} Minutes and {seconds} Seconds")
 
-
+def find_sd(user):
+    df = find_double_poops(user)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    total_time = df["timestamp"].iloc[-1] - pd.to_datetime("2025-01-01 00:00:01")
+    avg = (total_time / df["Poop"].iloc[-1]).total_seconds()
+    sum = 0
+    for i in range(1, len(df) - 1):
+        curr = df["timestamp"].iloc[i]
+        next = df["timestamp"].iloc[i+1]
+        delta = (next - curr).total_seconds()
+        sum += (delta - avg)**2
+    sd = timedelta(seconds=np.sqrt(sum/len(df)))
+    print(f"{user}'s Standard Deviation is {sd}")
+    avg = timedelta(seconds=avg)
+    print(f"      68% of their shits happen within {avg - sd} and {avg + sd} of their last shit")
 
 #extract_and_clean_all_data(DIRECTORY)
 #leaderboard()
 #display_specific_poops(labels=True, legend=True)
 #dynamic_bar_chart()
+#like_sender(pie=True, only_poops=False)
 #like_sender(pie=True, only_poops=True)
 #poops_per_day()
-compare_year_poops("Eoin", [DIRECTORY, "DATA/messages/inbox/poopooheads"], time_period=[pd.to_datetime("1969-01-01 00:00:01"), pd.to_datetime(f"1969-02-28 00:00:01")])
+#compare_year_poops("Dex", [DIRECTORY, "DATA/messages/inbox/poopooheads"], time_period=[pd.to_datetime("2024-01-01 00:00:01"), pd.to_datetime(f"2024-05-31 00:00:01")])
 
 #users = get_users(DIRECTORY)
 #for user in users:
-#    daily_poop_heatmap(user=user)
+#    daily_poop_heatmap(user=user, separate_days=False)
+
+users = get_users(DIRECTORY)
+for user in users:
+    longest_time_between_poops(user)
+    shortest_time_between_poops(user)
+    find_sd(user)
+    print("\n")
