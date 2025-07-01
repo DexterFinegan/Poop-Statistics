@@ -73,3 +73,17 @@ January Update must include
     - Total likes spread
     - Comparison Poops
     - Poops per day for the group
+
+July Update Goals
+    - Fully modulise the poopathon module 
+    - Clean up spare data                                                       X
+    - Have an export Assets folder to dump files into for the website           X
+    - Update README file, learn markdown
+    - Fix poops per day of the month chart
+    - Implement weather bivariate chart on poops
+    - Remove smoothing functions                                                X
+    - Fix Specific chart 
+    - Fix Noelle Exclusion                                                      X
+    - Have Text Representing what is happening at each step sent to terminal
+    - Have a data json file for each user on their stats                        X 
+    - Have a position over time line graph

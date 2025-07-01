@@ -1,0 +1,411 @@
+{
+    "Stephen": {
+        "monthly_scores": {
+            "January": 55,
+            "February": 104,
+            "March": 161,
+            "April": 211,
+            "May": 265,
+            "June": 329,
+            "July": 329
+        },
+        "position": {
+            "January": 2,
+            "February": 1,
+            "March": 1,
+            "April": 1,
+            "May": 1,
+            "June": 2,
+            "July": 2
+        }
+    },
+    "Eoin": {
+        "monthly_scores": {
+            "January": 52,
+            "February": 90,
+            "March": 142,
+            "April": 197,
+            "May": 248,
+            "June": 300,
+            "July": 300
+        },
+        "position": {
+            "January": 3,
+            "February": 4,
+            "March": 3,
+            "April": 3,
+            "May": 3,
+            "June": 4,
+            "July": 4
+        }
+    },
+    "Conor": {
+        "monthly_scores": {
+            "January": 32,
+            "February": 54,
+            "March": 77,
+            "April": 109,
+            "May": 132,
+            "June": 161,
+            "July": 161
+        },
+        "position": {
+            "January": 10,
+            "February": 12,
+            "March": 13,
+            "April": 14,
+            "May": 16,
+            "June": 15,
+            "July": 15
+        }
+    },
+    "Dan": {
+        "monthly_scores": {
+            "January": 37,
+            "February": 78,
+            "March": 115,
+            "April": 165,
+            "May": 215,
+            "June": 255,
+            "July": 255
+        },
+        "position": {
+            "January": 8,
+            "February": 7,
+            "March": 7,
+            "April": 5,
+            "May": 6,
+            "June": 6,
+            "July": 6
+        }
+    },
+    "Ros": {
+        "monthly_scores": {
+            "January": 33,
+            "February": 70,
+            "March": 103,
+            "April": 131,
+            "May": 156,
+            "June": 182,
+            "July": 182
+        },
+        "position": {
+            "January": 9,
+            "February": 9,
+            "March": 8,
+            "April": 10,
+            "May": 12,
+            "June": 12,
+            "July": 12
+        }
+    },
+    "Soumia": {
+        "monthly_scores": {
+            "January": 22,
+            "February": 39,
+            "March": 53,
+            "April": 74,
+            "May": 96,
+            "June": 127,
+            "July": 127
+        },
+        "position": {
+            "January": 17,
+            "February": 16,
+            "March": 18,
+            "April": 17,
+            "May": 19,
+            "June": 18,
+            "July": 18
+        }
+    },
+    "Katie": {
+        "monthly_scores": {
+            "January": 26,
+            "February": 52,
+            "March": 76,
+            "April": 101,
+            "May": 126,
+            "June": 158,
+            "July": 158
+        },
+        "position": {
+            "January": 15,
+            "February": 13,
+            "March": 14,
+            "April": 15,
+            "May": 17,
+            "June": 16,
+            "July": 16
+        }
+    },
+    "Conan": {
+        "monthly_scores": {
+            "January": 56,
+            "February": 95,
+            "March": 149,
+            "April": 200,
+            "May": 262,
+            "June": 334,
+            "July": 334
+        },
+        "position": {
+            "January": 1,
+            "February": 2,
+            "March": 2,
+            "April": 2,
+            "May": 2,
+            "June": 1,
+            "July": 1
+        }
+    },
+    "Harry": {
+        "monthly_scores": {
+            "January": 45,
+            "February": 83,
+            "March": 119,
+            "April": 164,
+            "May": 199,
+            "June": 214,
+            "July": 214
+        },
+        "position": {
+            "January": 4,
+            "February": 6,
+            "March": 5,
+            "April": 6,
+            "May": 9,
+            "June": 10,
+            "July": 10
+        }
+    },
+    "Ruby": {
+        "monthly_scores": {
+            "January": 30,
+            "February": 54,
+            "March": 82,
+            "April": 111,
+            "May": 148,
+            "June": 174,
+            "July": 174
+        },
+        "position": {
+            "January": 12,
+            "March": 11,
+            "April": 13,
+            "May": 14,
+            "June": 14,
+            "July": 14
+        }
+    },
+    "Shane": {
+        "monthly_scores": {
+            "January": 38,
+            "February": 70,
+            "March": 117,
+            "April": 165,
+            "May": 223,
+            "June": 276,
+            "July": 276
+        },
+        "position": {
+            "January": 7,
+            "March": 6,
+            "May": 5,
+            "June": 5,
+            "July": 5
+        }
+    },
+    "Noelle": {
+        "monthly_scores": {
+            "January": 16,
+            "February": 16,
+            "March": 16,
+            "April": 16,
+            "May": 16,
+            "June": 16,
+            "July": 16
+        },
+        "position": {
+            "January": 19,
+            "February": 18,
+            "March": 19,
+            "April": 19,
+            "May": 21,
+            "June": 20,
+            "July": 20
+        }
+    },
+    "Clay": {
+        "monthly_scores": {
+            "January": 31,
+            "February": 65,
+            "March": 102,
+            "April": 143,
+            "May": 190,
+            "June": 195,
+            "July": 195
+        },
+        "position": {
+            "January": 11,
+            "February": 10,
+            "March": 9,
+            "April": 9,
+            "May": 10,
+            "June": 11,
+            "July": 11
+        }
+    },
+    "Sean": {
+        "monthly_scores": {
+            "January": 39,
+            "February": 85,
+            "March": 119,
+            "April": 159,
+            "May": 209,
+            "June": 243,
+            "July": 243
+        },
+        "position": {
+            "January": 6,
+            "February": 5,
+            "April": 7,
+            "May": 7,
+            "June": 9,
+            "July": 9
+        }
+    },
+    "Niamh": {
+        "monthly_scores": {
+            "January": 41,
+            "February": 92,
+            "March": 141,
+            "April": 190,
+            "May": 246,
+            "June": 307,
+            "July": 307
+        },
+        "position": {
+            "January": 5,
+            "February": 3,
+            "March": 4,
+            "April": 4,
+            "May": 4,
+            "June": 3,
+            "July": 3
+        }
+    },
+    "Emma Smyth": {
+        "monthly_scores": {
+            "January": 29,
+            "February": 56,
+            "March": 87,
+            "April": 112,
+            "May": 149,
+            "June": 181,
+            "July": 181
+        },
+        "position": {
+            "January": 13,
+            "February": 11,
+            "March": 10,
+            "April": 12,
+            "May": 13,
+            "June": 13,
+            "July": 13
+        }
+    },
+    "Emma Sherlock": {
+        "monthly_scores": {
+            "January": 28,
+            "February": 49,
+            "March": 79,
+            "April": 112,
+            "May": 145,
+            "June": 174,
+            "July": 174
+        },
+        "position": {
+            "January": 14,
+            "February": 14,
+            "March": 12,
+            "May": 15
+        }
+    },
+    "Suzanne": {
+        "monthly_scores": {
+            "January": 25,
+            "February": 39,
+            "March": 74,
+            "April": 129,
+            "May": 181,
+            "June": 250,
+            "July": 250
+        },
+        "position": {
+            "January": 16,
+            "March": 15,
+            "April": 11,
+            "May": 11,
+            "June": 8,
+            "July": 8
+        }
+    },
+    "Georgia": {
+        "monthly_scores": {
+            "January": 19,
+            "February": 38,
+            "March": 65,
+            "April": 94,
+            "May": 121,
+            "June": 143,
+            "July": 143
+        },
+        "position": {
+            "January": 18,
+            "February": 17,
+            "March": 16,
+            "April": 16,
+            "May": 18,
+            "June": 17,
+            "July": 17
+        }
+    },
+    "Keelin": {
+        "monthly_scores": {
+            "January": 26,
+            "February": 48,
+            "March": 60,
+            "April": 60,
+            "May": 60,
+            "June": 60,
+            "July": 60
+        },
+        "position": {
+            "February": 15,
+            "March": 17,
+            "April": 18,
+            "May": 20,
+            "June": 19,
+            "July": 19
+        }
+    },
+    "Dex": {
+        "monthly_scores": {
+            "January": 38,
+            "February": 77,
+            "March": 115,
+            "April": 153,
+            "May": 201,
+            "June": 251,
+            "July": 251
+        },
+        "position": {
+            "February": 8,
+            "April": 8,
+            "May": 8,
+            "June": 7,
+            "July": 7
+        }
+    }
+}
